@@ -70,11 +70,11 @@ function CreateGame() {
                 }
                 const newGame = await response.json()
                 addNewGame(newGame)
-                setGameData(initialState)
             } catch (error) {
                 console.error('Error submitting new game:', error)
-                alert('Sorry, game creation was unsuccessful')
+                alert('Sorry, game creation was unsuccessful. Please try again.')
             }
+            setGameData(initialState)
         }
     }
 
