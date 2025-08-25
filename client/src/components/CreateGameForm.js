@@ -50,7 +50,13 @@ function CreateGame() {
 
     async function handleSubmit(e) {
         e.preventDefault()
-        if (gameData['location'] === '' || gameData['city'] === '' || gameData['state'] === '' || gameData['date'] === '' || gameData['time'] === '') {
+        if (
+            gameData['location'] === '' ||
+            gameData['city'] === '' ||
+            gameData['state'] === '' ||
+            gameData['date'] === '' ||
+            gameData['time'] === ''
+        ) {
             alert('All fields except for image are required')
         } else {
             try {
@@ -67,6 +73,7 @@ function CreateGame() {
                 setGameData(initialState)
             } catch (error) {
                 console.error('Error submitting new game:', error)
+                alert('Sorry, game creation was unsuccessful')
             }
         }
     }
