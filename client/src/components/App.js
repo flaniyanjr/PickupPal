@@ -4,50 +4,65 @@ import { Switch, Route, Outlet } from "react-router-dom";
 import Header from "./Header";
 
 function App() {
-  const [user, setUser]= useState(null)
+  const [user, setUser] = useState(null)
   const [allGames, setAllGames] = useState([])
   const [currentGame, setCurrentGame] = useState('')
-  const [allSignups, setAllSignups]= useState([])
-  const [createdGames, setCreatedGames]= useState([])
+  const [allSignups, setAllSignups] = useState([])
+  const [createdGames, setCreatedGames] = useState([])
 
   useEffect(() => {
-    fetch('/authorized')
-    .then((resp) => {
-      if (resp.ok) {
-        resp.json().then((user) => setUser(user))
-      } else {
-        console.log('No user logged in')
+    (async () => {
+      try {
+        const response = await fetch('/authorized')
+        if (response.ok) {
+          const user = await response.json()
+          setUser(user)
+        } else {
+          console.log('No user logged in')
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error)
       }
-    })
+    })()
   }, [])
 
   useEffect(() => {
-    fetch('/pickup_games')
-    .then(r => {
-      if (r.ok) {
-        r.json().then(games => setAllGames(games))
-      } else {
-        console.log('Failed to retrieve games')
+    (async () => {
+      try {
+        const response = await fetch('/pickup_games')
+        if (response.ok) {
+          const games = await response.json()
+          setAllGames(games)
+        } else {
+          console.log(`Failed to retrieve games. Status: ${response.status}`)
+        }
+      } catch (error) {
+        console.error('Error fetching pickup games:', error)
       }
-    })
+    })()
   }, [])
 
   useEffect(() => {
-    fetch('/player_signups')
-    .then(r => {
-      if (r.ok) {
-        r.json().then(signups => setAllSignups(signups))
-      } else {
-        console.log('Failed to retrieve signups')
+    (async () => {
+      try {
+        const response = await fetch('/player_signups')
+        if (response.ok) {
+          const signups = await response.json()
+          setAllSignups(signups)
+        } else {
+          console.log(`Failed to retrieve signups. Status: ${response.status}`)
+        }
+      } catch (error) {
+        console.error('Error fetching all signups', error)
       }
-    })
+    })()
   }, [])
 
-  let userSignups= []
+  let userSignups = []
 
   if (user) {
     if (user.player_signups) {
-      userSignups= allSignups.filter(signup => {
+      userSignups = allSignups.filter(signup => {
         if (signup.user.id === user.id) {
           return true
         } else {
@@ -56,10 +71,10 @@ function App() {
       })
     }
   }
-  
+
 
   function updateGameAttendees(newGame) {
-    const updatedGamesList= allGames.map(gameObj => {
+    const updatedGamesList = allGames.map(gameObj => {
       if (gameObj.id === newGame.id) {
         return newGame
       } else {
@@ -70,11 +85,11 @@ function App() {
   }
 
   function addNewSignup(newSignup) {
-    setAllSignups( current => [...current, newSignup])
+    setAllSignups(current => [...current, newSignup])
   }
 
   function removeSignup(id) {
-    const updatedSignupList= allSignups.filter(signup => {
+    const updatedSignupList = allSignups.filter(signup => {
       return signup.id !== id
     })
     setAllSignups(updatedSignupList)
@@ -86,10 +101,10 @@ function App() {
   }
 
   function deleteNewGame(id) {
-    const updatedGamesList= allGames.filter(gameObj => {
+    const updatedGamesList = allGames.filter(gameObj => {
       return gameObj.id !== id
     })
-    const updatedCreatedList= createdGames.filter(gameObj => {
+    const updatedCreatedList = createdGames.filter(gameObj => {
       return gameObj.id !== id
     })
     setAllGames(updatedGamesList)
@@ -97,14 +112,14 @@ function App() {
   }
 
   function updateNewGame(newGame) {
-    const updatedGameList= allGames.map(gameObj => {
+    const updatedGameList = allGames.map(gameObj => {
       if (gameObj.id === newGame.id) {
         return newGame
       } else {
         return gameObj
       }
     })
-    const updatedCreatedList= createdGames.map(gameObj => {
+    const updatedCreatedList = createdGames.map(gameObj => {
       if (gameObj.id === newGame.id) {
         return newGame
       } else {
@@ -115,7 +130,7 @@ function App() {
     setCreatedGames(updatedCreatedList)
   }
 
-  const context= {
+  const context = {
     user,
     setUser,
     allGames,
@@ -132,10 +147,10 @@ function App() {
     updateNewGame
   }
 
-  return(
+  return (
     <div>
-      <Header user= {user} setUser={setUser}/>
-      <Outlet context= {context}/>
+      <Header user={user} setUser={setUser} />
+      <Outlet context={context} />
     </div>
   )
 
