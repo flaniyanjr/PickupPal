@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from 'react'
-import CreatedGameCard from "./CreatedGameCard";
+import CreatedGameCard from "./CreatedGameCard.tsx";
 import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 

@@ -1,15 +1,45 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 
-function CreatedGameCard({ gameObj }) {
+interface Game {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface UserSignup {
+    id: number
+    pickup_game_id: number
+}
+
+interface OutletContext {
+    deleteNewGame: (id: number) => void
+    updateNewGame: (game: Game) => void
+    allGames: Game[]
+    userSignups: UserSignup[]
+    removeSignup: (id: number) => void
+}
+
+interface CreatedGameCardProps {
+    gameObj: Game
+}
+
+function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
+
     const { location, city, state, date, time, sport, image, total_attendees, id } = gameObj
 
-    const { deleteNewGame, allGames, updateNewGame, userSignups, removeSignup } = useOutletContext()
+    const { deleteNewGame, allGames, updateNewGame, userSignups, removeSignup } = useOutletContext<OutletContext>()
 
-    const [newDate, setNewDate] = useState(date)
-    const [newTime, setNewTime] = useState(time)
-    const [showUpdate, setShowUpdate] = useState(false)
-    const [submitted, setSubmitted] = useState(false)
+    const [newDate, setNewDate] = useState<string>(date)
+    const [newTime, setNewTime] = useState<string>(time)
+    const [showUpdate, setShowUpdate] = useState<boolean>(false)
+    const [submitted, setSubmitted] = useState<boolean>(false)
 
     const currentGameSignupsArray = userSignups.filter(signup => {
         return signup.pickup_game_id === id
@@ -35,15 +65,15 @@ function CreatedGameCard({ gameObj }) {
         }
     }
 
-    function handleDateChange(e) {
+    function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
         setNewDate(e.target.value)
     }
 
-    function handleTimeChange(e) {
+    function handleTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
         setNewTime(e.target.value)
     }
 
-    function handleSubmit(e) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         fetch(`/pickup_games/${id}`, {
             method: 'PATCH',
@@ -68,22 +98,14 @@ function CreatedGameCard({ gameObj }) {
         return game.id === id
     })
     const targetAttendeeGame = targetAttendeeArray[0]
-    const targetAttendeeTotal = targetAttendeeGame.total_attendees
+    const targetAttendeeTotal = targetAttendeeGame?.total_attendees ?? 0
 
     const currentDate = new Date()
-    let day = currentDate.getDate()
-    let month = currentDate.getMonth() + 1
+    const day = currentDate.getDate().toString().padStart(2, '0')
+    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0')
     const year = currentDate.getFullYear()
 
-    if (day < 10) {
-        day = '0' + day;
-    }
-
-    if (month < 10) {
-        month = '0' + month;
-    }
-
-    const today = year + '-' + month + '-' + day;
+    const today = `${year}-${month}-${day}`
 
     return (
         <div className="card">

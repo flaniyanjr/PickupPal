@@ -46,10 +46,10 @@ function Signup() {
                     const { user } = await response.json()
                     setUser(user)
                 } else {
-                    if (endpoint == '/login') {
+                    if (endpoint === '/login') {
                         setBadLogin(true)
                         setBadSignup(false)
-                    } else if (endpoint == '/users') {
+                    } else if (endpoint === '/users') {
                         setBadSignup(true)
                         setBadLogin(false)
                     }
