@@ -1,12 +1,42 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from 'react'
-import CreatedGameCard from "./CreatedGameCard";
+import CreatedGameCard from "./CreatedGameCard.tsx";
 import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 
+interface Game {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface GameFormData {
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+}
+
+interface User { }
+
+interface OutletContext {
+    addNewGame: (game: Game) => void
+    createdGames: Game[]
+    user: User | null
+}
+
 function CreateGame() {
 
-    const initialState = {
+    const initialState: GameFormData = {
         location: '',
         city: '',
         state: '',
@@ -16,23 +46,15 @@ function CreateGame() {
         image: ''
     }
 
-    const [gameData, setGameData] = useState(initialState)
-    const { addNewGame, createdGames, user } = useOutletContext()
+    const [gameData, setGameData] = useState<GameFormData>(initialState)
+    const { addNewGame, createdGames, user } = useOutletContext<OutletContext>()
 
     const currentDate = new Date()
-    let day = currentDate.getDate()
-    let month = currentDate.getMonth() + 1
+    let day = currentDate.getDate().toString().padStart(2, '0')
+    let month = (currentDate.getMonth() + 1).toString().padStart(2, '0')
     const year = currentDate.getFullYear()
 
-    if (day < 10) {
-        day = '0' + day;
-    }
-
-    if (month < 10) {
-        month = '0' + month;
-    }
-
-    const today = year + '-' + month + '-' + day;
+    const today = `${year}-${month}-${day}`
 
     let createdGameCards
 
@@ -42,13 +64,13 @@ function CreateGame() {
         })
     }
 
-    function handleChange(e) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         setGameData(current => {
             return { ...current, [e.target.name]: e.target.value }
         })
     }
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         if (
             gameData['location'] === '' ||
@@ -95,7 +117,7 @@ function CreateGame() {
                         <div>
                             <label>State</label>
                             <select name="state" onChange={handleChange} value={gameData.state}>
-                                <option value="" selected="selected" ></option>
+                                <option value=""></option>
                                 <option value="AL">Alabama</option>
                                 <option value="AK">Alaska</option>
                                 <option value="AZ">Arizona</option>
