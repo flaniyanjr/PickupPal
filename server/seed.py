@@ -36,13 +36,13 @@ if __name__ == '__main__':
 
         game5= PickupGame(location= 'Met Oval Field', city= 'New York', state= 'NY', date= '2024-10-12', time= '10:00', sport= 'Soccer', image= 'https://images.squarespace-cdn.com/content/v1/515e1bace4b0bca14d7a6ed3/1589414655900-A3UKH3L0A9HL2RUWYOOV/IMG_7929+2.jpg?format=1000w', total_attendees= 42)
 
-        game6= PickupGame(location= 'The Backyard Rink', city= 'Saint Paul', state= 'MN', date= '2024-09-24', time= '13:30', sport= 'Hockey', image= 'https://mybackyardsports.com/wp-content/uploads/bfi_thumb/rink2-157eiga10ycnqoa5gt7sg1s7cmvqc8j8jfr3al0o8fqv4tg6.jpg', total_attendees= 102)
+        game6= PickupGame(location= 'The Backyard Rink', city= 'Saint Paul', state= 'MN', date= '2024-09-24', time= '13:30', sport= 'Hockey', image= 'https://ezicerinks.com/cdn/shop/files/EZ_ICE_PRO_Home_Arena_System_1600x900_45cf916a-68aa-4883-a760-fc4632362bce.jpg?v=1630506824&width=2048', total_attendees= 102)
 
         game7= PickupGame(location= 'Clothier Field', city= 'Swarthmore', state= 'PA', date= '2024-09-22', time= '14:45', sport= 'Soccer', image= 'https://pbs.twimg.com/media/E5S3mB1WYAEJI90?format=jpg&name=4096x4096', total_attendees= 18)
 
         game8= PickupGame(location= 'Cardozo High School', city='Washington', state= 'DC', date= '2024-12-29', time= '11:00', sport= 'Football', image= 'https://live.staticflickr.com/5111/7157491064_36143f512c_b.jpg', total_attendees= 22)
 
-        game9= PickupGame(location= 'Dyckman Park', city= 'New York', state= 'NY', date= '2024-09-14', time= '21:00', sport= 'Basketball', image= 'https://i.ytimg.com/vi/tWU0IVOk4NU/maxresdefault.jpg', total_attendees= 450)
+        game9= PickupGame(location= 'Dyckman Park', city= 'New York', state= 'NY', date= '2024-09-14', time= '21:00', sport= 'Basketball', image= 'https://i0.wp.com/www.thecity.nyc/wp-content/uploads/2023/09/061224_dyckman_basketball_game_1-scaled.jpg?resize=1536%2C1024&ssl=1', total_attendees= 450)
 
         game10= PickupGame(location= 'Stanley Butler Softball Field', city= 'Cleveland', state= 'TN', date= '2024-08-30', time= '10:30', sport= 'Softball', image= 'https://leeuflames.com/images/2015/11/4//Softball%20Facility%202_038.jpg', total_attendees= 21)
 

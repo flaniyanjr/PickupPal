@@ -3,47 +3,47 @@ import App from "./components/App";
 import "./styling/index.css";
 import "./styling/welcomepage.css"
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider} from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import ReactDOM from "react-dom/client";
 import GameLibrary from "./components/GameLibrary"
 import SignupForm from "./components/SignupForm";
 import PersonalLibrary from "./components/PersonalLibrary";
-import CreateGame from "./components/CreateGameForm";
+import CreateGame from "./components/CreateGameForm.tsx";
 import MainScreen from "./components/MainScreen";
 
-const router = createBrowserRouter ([
-    {
-      path: "/",
-      element: <App/>,
-      children: [
-        {
-          path: "/",
-          element: <MainScreen />,
-        },
-        {
-          path: "/game-library",
-          element: <GameLibrary />,
-        },
-        {
-            path: "/signup-form",
-            element: <SignupForm />
-        },
-        {
-          path: "/personal-page",
-          element: <PersonalLibrary />
-        },
-        {
-          path: "/create-game",
-          element: <CreateGame />
-        }
-      ]
-    }
-  ]);
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      {
+        path: "/",
+        element: <MainScreen />,
+      },
+      {
+        path: "/game-library",
+        element: <GameLibrary />,
+      },
+      {
+        path: "/signup-form",
+        element: <SignupForm />
+      },
+      {
+        path: "/personal-page",
+        element: <PersonalLibrary />
+      },
+      {
+        path: "/create-game",
+        element: <CreateGame />
+      }
+    ]
+  }
+]);
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <RouterProvider router= {router}/>
+  <RouterProvider router={router} />
 );
 
 
