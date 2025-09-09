@@ -18,7 +18,7 @@ interface GameCardProps {
 }
 
 interface OutletContext {
-    setCurrentGame: (game: { gameObj: Game }) => void
+    setCurrentGame: (game: Game) => void
 }
 
 function GameCard({ gameObj }: GameCardProps) {
@@ -41,7 +41,7 @@ function GameCard({ gameObj }: GameCardProps) {
                 <p> Total Attendees: {total_attendees}</p>
             </div>
             <button className='submit-button green' onClick={() => {
-                setCurrentGame({ gameObj })
+                setCurrentGame(gameObj)
                 navigate('/signup-form')
             }}>Register</button>
         </div>
