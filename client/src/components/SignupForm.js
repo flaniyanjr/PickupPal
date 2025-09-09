@@ -29,7 +29,7 @@ function SignupForm() {
                         name: signupName,
                         preferred_position: position,
                         user_id: user.id,
-                        pickup_game_id: currentGame.gameObj.id
+                        pickup_game_id: currentGame?.id
                     })
                 })
                 if (!responseOne.ok) {
@@ -39,11 +39,11 @@ function SignupForm() {
                 addNewSignup(newSignup)
                 setSubmitted(true)
                 try {
-                    const responseTwo = await fetch(`/pickup_games/${currentGame.gameObj.id}`, {
+                    const responseTwo = await fetch(`/pickup_games/${currentGame?.id}`, {
                         method: 'PATCH',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            total_attendees: currentGame.gameObj.total_attendees + 1
+                            total_attendees: currentGame?.total_attendees + 1
                         })
                     })
                     if (responseTwo.ok) {
