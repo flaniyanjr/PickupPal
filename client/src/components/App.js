@@ -6,7 +6,7 @@ import Header from "./Header";
 function App() {
   const [user, setUser] = useState(null)
   const [allGames, setAllGames] = useState([])
-  const [currentGame, setCurrentGame] = useState('')
+  const [currentGame, setCurrentGame] = useState(null)
   const [allSignups, setAllSignups] = useState([])
   const [createdGames, setCreatedGames] = useState([])
 

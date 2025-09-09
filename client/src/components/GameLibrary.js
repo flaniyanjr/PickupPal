@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 
-import GameCard from "./GameCard"
+import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
 
 function GameLibrary() {
