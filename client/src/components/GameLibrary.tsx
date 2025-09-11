@@ -4,37 +4,56 @@ import { useState } from "react";
 import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
 
+interface Game {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface User { }
+
+interface OutletContext {
+    allGames: Game[]
+    user: User | null
+}
+
 function GameLibrary() {
 
-    const { allGames, user } = useOutletContext()
-    const [searchInput, setSearchInput] = useState('')
-    const [sort, setSort] = useState('')
+    const { allGames, user } = useOutletContext<OutletContext>()
+    const [searchInput, setSearchInput] = useState<string>('')
+    const [sort, setSort] = useState<string>('')
 
-    function handleSearchInput(e) {
+    function handleSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
         setSearchInput(e.target.value)
     }
 
-    function handleSort(e) {
+    function handleSort(e: React.ChangeEvent<HTMLSelectElement>) {
         setSort(e.target.value)
     }
 
-    let sortedGames = []
+    let sortedGames: Game[] = [...allGames]
 
     switch (sort) {
         case '':
-            sortedGames = allGames.sort((a, b) => a.id > b.id ? 1 : -1)
+            sortedGames.sort((a, b) => a.id - b.id)
             break
         case 'date':
-            sortedGames = allGames.sort((a, b) => a.date > b.date ? 1 : -1)
+            sortedGames.sort((a, b) => a.date.localeCompare(b.date))
             break
         case 'time':
-            sortedGames = allGames.sort((a, b) => a.time > b.time ? 1 : -1)
+            sortedGames.sort((a, b) => a.time.localeCompare(b.time))
             break
         case 'state':
-            sortedGames = allGames.sort((a, b) => a.state > b.state ? 1 : -1)
+            sortedGames.sort((a, b) => a.state.localeCompare(b.state))
             break
         case 'attendance':
-            sortedGames = allGames.sort((a, b) => a.total_attendees - b.total_attendees)
+            sortedGames.sort((a, b) => a.total_attendees - b.total_attendees)
     }
 
     const filteredGames = sortedGames.filter(gameObj => {

@@ -5,7 +5,7 @@ import "./styling/welcomepage.css"
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import ReactDOM from "react-dom/client";
-import GameLibrary from "./components/GameLibrary"
+import GameLibrary from "./components/GameLibrary.tsx"
 import SignupForm from "./components/SignupForm";
 import PersonalLibrary from "./components/PersonalLibrary";
 import CreateGame from "./components/CreateGameForm.tsx";
