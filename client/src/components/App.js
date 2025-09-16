@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Outlet } from "react-router-dom";
 
-import Header from "./Header";
+import Header from "./Header.tsx";
 
 function App() {
   const [user, setUser] = useState(null)
