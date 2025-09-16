@@ -9,7 +9,7 @@ import GameLibrary from "./components/GameLibrary.tsx"
 import SignupForm from "./components/SignupForm";
 import PersonalLibrary from "./components/PersonalLibrary";
 import CreateGame from "./components/CreateGameForm.tsx";
-import MainScreen from "./components/MainScreen";
+import MainScreen from "./components/MainScreen.tsx";
 
 const router = createBrowserRouter([
   {
