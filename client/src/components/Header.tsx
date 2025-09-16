@@ -1,11 +1,26 @@
 import NavBar from "./NavBar"
-import header from '../styling/header.css'
+import '../styling/header.css'
 import newlogo from '../img/newlogo.jpg'
 import { Button } from '@mui/material';
+import * as React from "react";
 
-import Signup from "./Signup";
+interface PlayerSignup { }
 
-function Header({ user, setUser }) {
+interface User {
+  id: number
+  username: string
+  email: string
+  created_at: string
+  updated_at: string
+  player_signups: PlayerSignup[]
+}
+
+interface HeaderProps {
+  user: User | null
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
+}
+
+function Header({ user, setUser }: HeaderProps) {
 
   async function handleLogout() {
     const response = await fetch('/logout', {
@@ -21,7 +36,7 @@ function Header({ user, setUser }) {
     <div>
       <NavBar />
       <div>
-        {user ? <Button varient='contained' onClick={handleLogout} id='logout-button'>Logout</Button> : null}
+        {user ? <Button variant='contained' onClick={handleLogout} id='logout-button'>Logout</Button> : null}
         {user ? <p className="user-info"><b>Welcome: {user.username}</b></p> : null}
       </div>
       <div className='logo-container'>
