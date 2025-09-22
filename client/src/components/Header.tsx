@@ -1,4 +1,4 @@
-import NavBar from "./NavBar"
+import NavBar from "./NavBar.tsx"
 import '../styling/header.css'
 import newlogo from '../img/newlogo.jpg'
 import { Button } from '@mui/material';
