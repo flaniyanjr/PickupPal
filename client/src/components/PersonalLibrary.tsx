@@ -3,12 +3,41 @@ import { useState } from "react";
 import PersonalCard from "./PersonalCard";
 import Footer from "./Footer.tsx";
 
+interface User { }
+
+interface PickupGame {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface UserSignup {
+    id: number
+    name: string
+    preferred_position: string
+    user_id: number
+    pickup_game_id: number
+    user: User
+    pickup_game: PickupGame
+}
+
+interface OutletContext {
+    user: User | null
+    userSignups: UserSignup[]
+}
+
 function PersonalLibrary() {
 
-    const { userSignups, user } = useOutletContext()
-    const [searchInput, setSearchInput] = useState('')
+    const { userSignups, user } = useOutletContext<OutletContext>()
+    const [searchInput, setSearchInput] = useState<string>('')
 
-    function handleSearchInput(e) {
+    function handleSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
         setSearchInput(e.target.value)
     }
 
