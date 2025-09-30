@@ -1,22 +1,55 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
+interface User {
+    id: number
+}
+
+interface PickupGame {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface PlayerSignup {
+    id: number
+    name: string
+    preferred_position: string
+    user_id: number
+    pickup_game_id: number
+    user: User
+    pickup_game: PickupGame
+}
+
+interface OutletContext {
+    user: User
+    currentGame: PickupGame
+    updateGameAttendees: (newGame: PickupGame) => void
+    addNewSignup: (newSignup: PlayerSignup) => void
+}
+
 function SignupForm() {
-    const { user, currentGame, updateGameAttendees, addNewSignup } = useOutletContext()
+    const { user, currentGame, updateGameAttendees, addNewSignup } = useOutletContext<OutletContext>()
 
     const [signupName, setSignupName] = useState('')
     const [position, setPosition] = useState('')
     const [submitted, setSubmitted] = useState(false)
 
-    function handleSignupName(e) {
+    function handleSignupName(e: React.ChangeEvent<HTMLInputElement>) {
         setSignupName(e.target.value)
     }
 
-    function handlePosition(e) {
+    function handlePosition(e: React.ChangeEvent<HTMLInputElement>) {
         setPosition(e.target.value)
     }
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         if (signupName === '') {
             alert('Name is required')
