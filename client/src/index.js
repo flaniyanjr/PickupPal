@@ -6,7 +6,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import ReactDOM from "react-dom/client";
 import GameLibrary from "./components/GameLibrary.tsx"
-import SignupForm from "./components/SignupForm";
+import SignupForm from "./components/SignupForm.tsx";
 import PersonalLibrary from "./components/PersonalLibrary.tsx";
 import CreateGame from "./components/CreateGameForm.tsx";
 import MainScreen from "./components/MainScreen.tsx";
