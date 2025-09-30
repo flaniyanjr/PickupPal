@@ -1,6 +1,6 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
-import PersonalCard from "./PersonalCard";
+import PersonalCard from "./PersonalCard.tsx";
 import Footer from "./Footer.tsx";
 
 interface User { }

@@ -1,8 +1,51 @@
 import { useOutletContext } from "react-router-dom";
 
-function PersonalCard({ gameObj }) {
+interface User {
+    id: number
+    username: string
+    email: string
+    created_at: string
+    updated_at: string
+    player_signups: PlayerSignup[]
+    pickup_games: PickupGame[]
+}
 
-    const { userSignups, removeSignup, allGames, updateGameAttendees } = useOutletContext()
+interface PlayerSignup {
+    id: number
+    name: string
+    preferred_position: string
+    user_id: number
+    pickup_game_id: number
+    user: User
+    pickup_game: PickupGame
+}
+
+interface PickupGame {
+    id: number
+    location: string
+    city: string
+    state: string
+    date: string
+    time: string
+    sport: string
+    image: string
+    total_attendees: number
+}
+
+interface PersonalCardProps {
+    gameObj: PickupGame
+}
+
+interface OutletContext {
+    userSignups: PlayerSignup[]
+    removeSignup: (id: number) => void
+    allGames: PickupGame[]
+    updateGameAttendees: (newGame: PickupGame) => void
+}
+
+function PersonalCard({ gameObj }: PersonalCardProps) {
+
+    const { userSignups, removeSignup, allGames, updateGameAttendees } = useOutletContext<OutletContext>()
 
     const { location, city, state, date, time, sport, image, total_attendees, id } = gameObj
 
@@ -20,9 +63,10 @@ function PersonalCard({ gameObj }) {
         return game.id === id
     })
     const targetAttendeeGame = targetAttendeeArray[0]
-    const targetAttendeeTotal = targetAttendeeGame.total_attendees
+    const targetAttendeeTotal = targetAttendeeGame?.total_attendees ?? 0
 
     async function handleDelete() {
+        if (!targetSignup || !targetAttendeeGame) return
         try {
             const responseOne = await fetch(`/player_signups/${targetSignup.id}`, {
                 method: 'DELETE'
