@@ -4,12 +4,18 @@ import * as yup from 'yup';
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom';
 
+interface User { }
+
+interface OutletContext {
+    setUser: React.Dispatch<React.SetStateAction<User | null>>
+}
+
 function Signup() {
 
     const [signup, setSignup] = useState(true)
     const [badLogin, setBadLogin] = useState(false)
     const [badSignup, setBadSignup] = useState(false)
-    const { setUser } = useOutletContext()
+    const { setUser } = useOutletContext<OutletContext>()
 
     const signupSchema = yup.object().shape({
         username: yup.string().min(5, 'Username is too short!').max(15, 'Username is too Long!').required('Username Required'),
