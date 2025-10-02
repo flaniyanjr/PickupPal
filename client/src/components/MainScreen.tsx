@@ -1,4 +1,4 @@
-import Signup from "./Signup"
+import Signup from "./Signup.tsx"
 import Homepage from "./Homepage.tsx"
 import { useOutletContext } from "react-router-dom"
 
