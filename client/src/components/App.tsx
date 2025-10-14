@@ -3,6 +3,25 @@ import { Switch, Route, Outlet } from "react-router-dom";
 
 import Header from "./Header.tsx";
 
+interface User {
+  id: number
+  username: string
+  email: string
+  created_at: string
+  updated_at: string
+  player_signups: PlayerSignup[]
+}
+
+interface PlayerSignup {
+  id: number
+  name: string
+  preferred_position: string
+  user_id: number
+  pickup_game_id: number
+  user: User
+  pickup_game: PickupGame
+}
+
 function App() {
   const [user, setUser] = useState(null)
   const [allGames, setAllGames] = useState([])
@@ -58,7 +77,7 @@ function App() {
     })()
   }, [])
 
-  let userSignups = []
+  let userSignups: PlayerSignup[] | null = []
 
   if (user) {
     if (user.player_signups) {
