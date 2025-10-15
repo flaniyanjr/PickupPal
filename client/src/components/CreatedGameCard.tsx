@@ -1,33 +1,17 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
-
-interface Game {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
-
-interface UserSignup {
-    id: number
-    pickup_game_id: number
-}
+import { PlayerSignup, PickupGame } from "../types"
 
 interface OutletContext {
     deleteNewGame: (id: number) => void
-    updateNewGame: (game: Game) => void
-    allGames: Game[]
-    userSignups: UserSignup[]
+    updateNewGame: (game: PickupGame) => void
+    allGames: PickupGame[]
+    userSignups: PlayerSignup[]
     removeSignup: (id: number) => void
 }
 
 interface CreatedGameCardProps {
-    gameObj: Game
+    gameObj: PickupGame
 }
 
 function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
