@@ -8,6 +8,8 @@ export interface PickupGame {
     sport: string
     image: string
     total_attendees: number
+    player_signups?: PlayerSignup[]
+    users?: User[]
 }
 
 export interface PlayerSignup {
@@ -27,4 +29,5 @@ export interface User {
     created_at: string
     updated_at: string
     player_signups?: PlayerSignup[]
+    pickup_games?: PickupGame[]
 }
