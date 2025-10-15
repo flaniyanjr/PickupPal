@@ -37,6 +37,8 @@
     "skipLibCheck": true,
     "allowJs": true,
     "checkJs": false,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true,
   },
   "include": [
     "client/src"
