@@ -2,34 +2,11 @@ import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import PersonalCard from "./PersonalCard.tsx";
 import Footer from "./Footer.tsx";
-
-interface User { }
-
-interface PickupGame {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
-
-interface UserSignup {
-    id: number
-    name: string
-    preferred_position: string
-    user_id: number
-    pickup_game_id: number
-    user: User
-    pickup_game: PickupGame
-}
+import { User, PlayerSignup } from "../types"
 
 interface OutletContext {
     user: User | null
-    userSignups: UserSignup[]
+    userSignups: PlayerSignup[]
 }
 
 function PersonalLibrary() {

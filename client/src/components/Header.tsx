@@ -3,17 +3,7 @@ import '../styling/header.css'
 import newlogo from '../img/newlogo.jpg'
 import { Button } from '@mui/material';
 import * as React from "react";
-
-interface PlayerSignup { }
-
-interface User {
-  id: number
-  username: string
-  email: string
-  created_at: string
-  updated_at: string
-  player_signups: PlayerSignup[]
-}
+import { User } from "../types"
 
 interface HeaderProps {
   user: User | null

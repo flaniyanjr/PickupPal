@@ -3,8 +3,7 @@ import { useFormik } from 'formik'
 import * as yup from 'yup';
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom';
-
-interface User { }
+import { User } from "../types"
 
 interface OutletContext {
     setUser: React.Dispatch<React.SetStateAction<User | null>>

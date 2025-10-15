@@ -1,25 +1,11 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
-
 import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
-
-interface Game {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
-
-interface User { }
+import { PickupGame, User } from "../types"
 
 interface OutletContext {
-    allGames: Game[]
+    allGames: PickupGame[]
     user: User | null
 }
 
@@ -37,7 +23,7 @@ function GameLibrary() {
         setSort(e.target.value)
     }
 
-    let sortedGames: Game[] = [...allGames]
+    let sortedGames: PickupGame[] = [...allGames]
 
     switch (sort) {
         case '':

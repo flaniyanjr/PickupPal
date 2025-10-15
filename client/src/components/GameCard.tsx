@@ -1,24 +1,13 @@
 import { useNavigate, useOutletContext } from "react-router-dom"
 import { useState } from 'react'
-
-interface Game {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
+import { PickupGame } from "../types"
 
 interface GameCardProps {
-    gameObj: Game
+    gameObj: PickupGame
 }
 
 interface OutletContext {
-    setCurrentGame: (game: Game) => void
+    setCurrentGame: (game: PickupGame) => void
 }
 
 function GameCard({ gameObj }: GameCardProps) {
