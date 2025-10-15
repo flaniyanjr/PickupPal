@@ -1,31 +1,7 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { User, PlayerSignup, PickupGame } from "../types"
 
-interface User {
-    id: number
-}
-
-interface PickupGame {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
-
-interface PlayerSignup {
-    id: number
-    name: string
-    preferred_position: string
-    user_id: number
-    pickup_game_id: number
-    user: User
-    pickup_game: PickupGame
-}
 
 interface OutletContext {
     user: User

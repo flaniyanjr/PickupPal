@@ -3,18 +3,7 @@ import { useState } from 'react'
 import CreatedGameCard from "./CreatedGameCard.tsx";
 import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
-
-interface Game {
-    id: number
-    location: string
-    city: string
-    state: string
-    date: string
-    time: string
-    sport: string
-    image: string
-    total_attendees: number
-}
+import { User, PickupGame } from "../types"
 
 interface GameFormData {
     location: string
@@ -26,11 +15,9 @@ interface GameFormData {
     image: string
 }
 
-interface User { }
-
 interface OutletContext {
-    addNewGame: (game: Game) => void
-    createdGames: Game[]
+    addNewGame: (game: PickupGame) => void
+    createdGames: PickupGame[]
     user: User | null
 }
 

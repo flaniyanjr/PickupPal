@@ -3,7 +3,7 @@ import '../styling/header.css'
 import newlogo from '../img/newlogo.jpg'
 import { Button } from '@mui/material';
 import * as React from "react";
-import { PlayerSignup, User } from "../types"
+import { User } from "../types"
 
 interface HeaderProps {
   user: User | null
