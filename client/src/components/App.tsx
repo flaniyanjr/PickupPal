@@ -1,40 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route, Outlet } from "react-router-dom";
-
+import { Outlet } from "react-router-dom";
 import Header from "./Header.tsx";
+import { User, PlayerSignup, PickupGame } from "../types"
 
-interface User {
-  id: number
-  username: string
-  email: string
-  created_at: string
-  updated_at: string
-  player_signups: PlayerSignup[]
-}
-
-interface PlayerSignup {
-  id: number
-  name: string
-  preferred_position: string
-  user_id: number
-  pickup_game_id: number
-  user: User
-  pickup_game: PickupGame
-}
 
 function App() {
-  const [user, setUser] = useState(null)
-  const [allGames, setAllGames] = useState([])
-  const [currentGame, setCurrentGame] = useState(null)
-  const [allSignups, setAllSignups] = useState([])
-  const [createdGames, setCreatedGames] = useState([])
+  const [user, setUser] = useState<User | null>(null)
+  const [allGames, setAllGames] = useState<PickupGame[]>([])
+  const [currentGame, setCurrentGame] = useState<PickupGame | null>(null)
+  const [allSignups, setAllSignups] = useState<PlayerSignup[]>([])
+  const [createdGames, setCreatedGames] = useState<PickupGame[]>([])
 
   useEffect(() => {
     (async () => {
       try {
         const response = await fetch('/authorized')
         if (response.ok) {
-          const user = await response.json()
+          const user: User = await response.json()
           setUser(user)
         } else {
           console.log('No user logged in')
@@ -50,7 +32,7 @@ function App() {
       try {
         const response = await fetch('/pickup_games')
         if (response.ok) {
-          const games = await response.json()
+          const games: PickupGame[] = await response.json()
           setAllGames(games)
         } else {
           console.log(`Failed to retrieve games. Status: ${response.status}`)
@@ -66,7 +48,7 @@ function App() {
       try {
         const response = await fetch('/player_signups')
         if (response.ok) {
-          const signups = await response.json()
+          const signups: PlayerSignup[] = await response.json()
           setAllSignups(signups)
         } else {
           console.log(`Failed to retrieve signups. Status: ${response.status}`)
@@ -92,7 +74,7 @@ function App() {
   }
 
 
-  function updateGameAttendees(newGame) {
+  function updateGameAttendees(newGame: PickupGame) {
     const updatedGamesList = allGames.map(gameObj => {
       if (gameObj.id === newGame.id) {
         return newGame
@@ -103,23 +85,23 @@ function App() {
     setAllGames(updatedGamesList)
   }
 
-  function addNewSignup(newSignup) {
+  function addNewSignup(newSignup: PlayerSignup) {
     setAllSignups(current => [...current, newSignup])
   }
 
-  function removeSignup(id) {
+  function removeSignup(id: number) {
     const updatedSignupList = allSignups.filter(signup => {
       return signup.id !== id
     })
     setAllSignups(updatedSignupList)
   }
 
-  function addNewGame(newGame) {
+  function addNewGame(newGame: PickupGame) {
     setAllGames(current => [...current, newGame])
     setCreatedGames(current => [...current, newGame])
   }
 
-  function deleteNewGame(id) {
+  function deleteNewGame(id: number) {
     const updatedGamesList = allGames.filter(gameObj => {
       return gameObj.id !== id
     })
@@ -130,7 +112,7 @@ function App() {
     setCreatedGames(updatedCreatedList)
   }
 
-  function updateNewGame(newGame) {
+  function updateNewGame(newGame: PickupGame) {
     const updatedGameList = allGames.map(gameObj => {
       if (gameObj.id === newGame.id) {
         return newGame
