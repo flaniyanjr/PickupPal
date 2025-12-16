@@ -3,15 +3,15 @@ import sportlogo2 from '../img/sportlogo2.jpg'
 
 function Homepage() {
     return (
-        <div>
-            <div className='welcome-message-container'>
+        <div className='relative'>
+            <div className='text-center'>
                 <h3 className='welcome-message'>PickupPal</h3>
             </div>
-            <div className='logo-three-image-containter'>
-                <img id='logo-three' src={sportlogo3} alt='sports logo' />
+            <div className='absolute top-[40px] left-5 h-[150px]'>
+                <img className='max-w-[300%] max-h-[300%] opacity-100' src={sportlogo3} alt='sports logo' />
             </div>
-            <div className='logo-two-image-container'>
-                <img id='logo-two' src={sportlogo2} alt='sports logo' />
+            <div className='absolute top-[40px] right-5 h-[150px]'>
+                <img className='max-w[300%] max-h-[300%] opacity-100' src={sportlogo2} alt='sports logo' />
             </div>
         </div>
     )
