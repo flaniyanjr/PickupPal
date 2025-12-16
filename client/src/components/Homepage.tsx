@@ -5,7 +5,7 @@ function Homepage() {
     return (
         <div className='relative'>
             <div className='text-center'>
-                <h3 className='welcome-message'>PickupPal</h3>
+                <h3 className='welcome-message font-serif mt-[80px]'>PickupPal</h3>
             </div>
             <div className='absolute top-[40px] left-5 h-[150px]'>
                 <img className='max-w-[300%] max-h-[300%] opacity-100' src={sportlogo3} alt='sports logo' />
