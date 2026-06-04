@@ -8,6 +8,10 @@ from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
 from flask_bcrypt import Bcrypt
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Local imports
 
@@ -32,4 +36,4 @@ bcrypt= Bcrypt(app)
 # Instantiate CORS
 CORS(app)
 
-app.secret_key = b'8\xfe\xe6I\xd6\xd6\x9a\x87j\x9d\xf5\t\xdd\x85\x137' 
+app.secret_key = os.environ.get('SECRET_KEY')
