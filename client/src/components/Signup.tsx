@@ -73,7 +73,7 @@ function Signup() {
         <Box className='signup-container'>
 
             <div className='signup-field form'>
-                <Button onClick={toggleSignup} id='signup-button'>{signup ? 'Click to Login' : 'CLick to Register'}</Button>
+                <Button onClick={toggleSignup} id='signup-button'>{signup ? 'Click to Login' : 'Click to Register'}</Button>
 
                 <form onSubmit={formik.handleSubmit}>
                     <TextField
@@ -126,7 +126,7 @@ function Signup() {
                     <div id='signup-submit' >
                         <Button id='signup-submit' variant='contained' type='submit'>Submit</Button>
                     </div>
-                    {badLogin ? <h2 id='login-error-message'>Incorrent username or password. Please try again</h2> : null}
+                    {badLogin ? <h2 id='login-error-message'>Incorrect username or password. Please try again</h2> : null}
                     {badSignup ? <h2 id='login-error-message'> Username or email already in use. Please use another one</h2> : null}
                 </form>
             </div>
