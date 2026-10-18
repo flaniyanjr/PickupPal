@@ -29,7 +29,7 @@ if __name__ == '__main__':
         g3= PickupGame(location= 'Clothier Field', city= 'Swarthmore', state= 'PA', date= '2026-11-14', time= '14:45', format= '11v11', max_players= 22, sport= 'Soccer', image= img_clothier, total_attendees= 0, creator_id= user1.id)
         g4= PickupGame(location= 'Cardozo High School', city= 'Washington', state= 'DC', date= '2026-11-15', time= '11:00', format= '7v7', max_players= 14, sport= 'Soccer', image= img_cardozo, total_attendees= 1, creator_id= user2.id)
         g5= PickupGame(location= "St. Paul's School", city= 'Brooklandville', state= 'MD', date= '2026-11-21', time= '09:00', format= '5v5', max_players= 10, sport= 'Soccer', image= img_stpauls, total_attendees= 0, creator_id= user2.id)
-        g6= PickupGame(location= 'Pier 5', city= 'Brooklyn', state= 'NY', date= '2026-11-22', time= '16:00', format= '9v9', max_players= 14, sport= 'Soccer', image= 'img_pier5', total_attendees= 0, creator_id= user2.id)
+        g6= PickupGame(location= 'Pier 5', city= 'Brooklyn', state= 'NY', date= '2026-11-22', time= '16:00', format= '9v9', max_players= 18, sport= 'Soccer', image= img_pier5, total_attendees= 0, creator_id= user2.id)
         db.session.add_all([g1, g2, g3, g4, g5, g6])
         db.session.commit()
 

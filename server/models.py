@@ -140,6 +140,8 @@ class PickupGame(db.Model, SerializerMixin):
     def validate_image(self, key, image):
         if type(image) != str:
             raise ValueError('Image must be a string')
+        elif image and not image.startswith(('http://', 'https://')):
+            raise ValueError('Image must be a web address starting with http:// or https://')
         return image
 
 
