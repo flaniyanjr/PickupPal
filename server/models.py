@@ -5,7 +5,7 @@ from sqlalchemy.orm import validates
 from config import db, bcrypt
 
 POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
-FORMATS = ['5v5', '7v7', '9v9' '11v11']
+FORMATS = ['5v5', '7v7', '9v9', '11v11']
 
 class User(db.Model, SerializerMixin):
     __tablename__= 'users'
