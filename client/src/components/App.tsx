@@ -9,7 +9,6 @@ function App() {
   const [allGames, setAllGames] = useState<PickupGame[]>([])
   const [currentGame, setCurrentGame] = useState<PickupGame | null>(null)
   const [allSignups, setAllSignups] = useState<PlayerSignup[]>([])
-  const [createdGames, setCreatedGames] = useState<PickupGame[]>([])
   const [authChecked, setAuthChecked] = useState<boolean>(false)
 
   useEffect(() => {
@@ -76,6 +75,7 @@ function App() {
     }
   }
 
+  const createdGames: PickupGame[] = user ? allGames.filter(game => game.creator_id === user.id) : []
 
   function updateGameAttendees(newGame: PickupGame) {
     const updatedGamesList = allGames.map(gameObj => {
@@ -101,37 +101,14 @@ function App() {
 
   function addNewGame(newGame: PickupGame) {
     setAllGames(current => [...current, newGame])
-    setCreatedGames(current => [...current, newGame])
   }
 
   function deleteNewGame(id: number) {
-    const updatedGamesList = allGames.filter(gameObj => {
-      return gameObj.id !== id
-    })
-    const updatedCreatedList = createdGames.filter(gameObj => {
-      return gameObj.id !== id
-    })
-    setAllGames(updatedGamesList)
-    setCreatedGames(updatedCreatedList)
+    setAllGames(current => current.filter(gameObj => gameObj.id !== id))
   }
 
   function updateNewGame(newGame: PickupGame) {
-    const updatedGameList = allGames.map(gameObj => {
-      if (gameObj.id === newGame.id) {
-        return newGame
-      } else {
-        return gameObj
-      }
-    })
-    const updatedCreatedList = createdGames.map(gameObj => {
-      if (gameObj.id === newGame.id) {
-        return newGame
-      } else {
-        return gameObj
-      }
-    })
-    setAllGames(updatedGameList)
-    setCreatedGames(updatedCreatedList)
+    setAllGames(current => current.map(gameObj => (gameObj.id === newGame.id ? newGame : gameObj)))
   }
 
   const context = {

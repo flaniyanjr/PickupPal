@@ -5,9 +5,14 @@ export interface PickupGame {
     state: string
     date: string
     time: string
+    format: string
+    max_players: number
+    latitude: number | null
+    longitude: number | null
     sport: string
     image: string
     total_attendees: number
+    creator_id: number | null
     player_signups?: PlayerSignup[]
     users?: User[]
 }
