@@ -10,6 +10,7 @@ function App() {
   const [currentGame, setCurrentGame] = useState<PickupGame | null>(null)
   const [allSignups, setAllSignups] = useState<PlayerSignup[]>([])
   const [createdGames, setCreatedGames] = useState<PickupGame[]>([])
+  const [authChecked, setAuthChecked] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
@@ -23,6 +24,8 @@ function App() {
         }
       } catch (error) {
         console.error('Error fetching user:', error)
+      } finally {
+        setAuthChecked(true)
       }
     })()
   }, [])
@@ -146,6 +149,10 @@ function App() {
     createdGames,
     deleteNewGame,
     updateNewGame
+  }
+
+  if (!authChecked) {
+    return null
   }
 
   return (
