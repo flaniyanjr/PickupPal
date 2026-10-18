@@ -4,6 +4,7 @@ import CreatedGameCard from "./CreatedGameCard.tsx";
 import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 import { User, PickupGame } from "../types"
+import { FORMATS, DEFAULT_FORMAT, minPlayers } from "../constants.ts"
 
 interface GameFormData {
     location: string
@@ -11,7 +12,8 @@ interface GameFormData {
     state: string
     date: string
     time: string
-    sport: string
+    format: string
+    max_players: string
     image: string
 }
 
@@ -29,11 +31,13 @@ function CreateGame() {
         state: '',
         date: '',
         time: '',
-        sport: '',
+        format: DEFAULT_FORMAT,
+        max_players: String(minPlayers(DEFAULT_FORMAT)),
         image: ''
     }
 
     const [gameData, setGameData] = useState<GameFormData>(initialState)
+    const [error, setError] = useState<string>('')
     const { addNewGame, createdGames, user } = useOutletContext<OutletContext>()
 
     const currentDate = new Date()
@@ -57,33 +61,60 @@ function CreateGame() {
         })
     }
 
+    function handleFormatChange(e: React.ChangeEvent<HTMLSelectElement>) {
+        const newFormat = e.target.value
+        setGameData(current => {
+            return {
+                ...current,
+                format: newFormat,
+                max_players: String(minPlayers(newFormat))
+            }
+        })
+    }
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        setError('')
+
         if (
-            gameData['location'] === '' ||
-            gameData['city'] === '' ||
-            gameData['state'] === '' ||
-            gameData['date'] === '' ||
-            gameData['time'] === ''
+            gameData.location === '' ||
+            gameData.city === '' ||
+            gameData.state === '' ||
+            gameData.date === '' ||
+            gameData.time === ''
         ) {
-            alert('All fields except for image are required')
-        } else {
-            try {
-                const response = await fetch('/pickup_games', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ...gameData, total_attendees: 0 })
+            setError('Venue, city, state, date and time are required')
+            return
+        }
+
+        const maxPlayers = Number(gameData.max_players)
+        const minAllowed = minPlayers(gameData.format)
+        if (!Number.isInteger(maxPlayers) || maxPlayers < minAllowed) {
+            setError(`A ${gameData.format} game needs at least ${minAllowed} players`)
+            return
+        }
+
+        try {
+            const response = await fetch('/pickup_games', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...gameData,
+                    max_players: maxPlayers,
+                    sport: 'Soccer',
+                    total_attendees: 0
                 })
-                if (!response.ok) {
-                    throw new Error(`Failed to create game. Status: ${response.status}`)
-                }
-                const newGame = await response.json()
-                addNewGame(newGame)
-            } catch (error) {
-                console.error('Error submitting new game:', error)
-                alert('Sorry, game creation was unsuccessful. Please try again.')
+            })
+            const data = await response.json()
+            if (!response.ok) {
+                setError(data.error || `Game creation failed (status ${response.status})`)
+                return
             }
+            addNewGame(data)
             setGameData(initialState)
+        } catch (err) {
+            console.error('Error submitting new game:', err)
+            setError('Could not reach the server. Please try again.')
         }
     }
 
@@ -167,13 +198,27 @@ function CreateGame() {
                             <input type='time' name='time' value={gameData.time} onChange={handleChange} />
                         </div>
                         <div>
-                            <label>Sport</label>
-                            <input type='text' name='sport' value={gameData.sport} onChange={handleChange} />
+                            <label>Format</label>
+                            <select name="format" value={gameData.format} onChange={handleFormatChange}>
+                                {FORMATS.map(f => <option key={f} value={f}>{f}</option>)}
+                            </select>
                         </div>
                         <div>
-                            <label>Image</label>
+                            <label>Max Players</label>
+                            <input
+                                type='number'
+                                name='max_players'
+                                min={minPlayers(gameData.format)}
+                                max={30}
+                                value={gameData.max_players}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <div>
+                            <label>Image URL (optional)</label>
                             <input type='text' name='image' value={gameData.image} onChange={handleChange} />
                         </div>
+                        {error ? <p style={{ color: 'red' }}>{error}</p> : null}
                         <button className='submit-button green' type='submit'>Create</button>
                     </form>
                     <div className='logo-four-image-containter'>
