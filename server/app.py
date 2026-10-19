@@ -46,9 +46,12 @@ class PickupGames(Resource):
         return make_response(games_list, 200)
     
     def post(self):
+        user_id= session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Login required'}, 401)
         params= request.json
         try:
-            new_game= PickupGame(location= params['location'], city= params['city'], state= params['state'], date= params['date'], time= params['time'], sport= params['sport'], image= params['image'], total_attendees= params['total_attendees'])
+            new_game= PickupGame(location= params['location'], city= params['city'], state= params['state'], date= params['date'], time= params['time'], format= params.get('format', '7v7'), max_players= params.get('max_players', 14), latitude= params.get('latitude'), longitude= params.get('longitude'), sport= params['sport'], image= params['image'], total_attendees= params['total_attendees'], creator_id= user_id,)
         except ValueError as validation_error:
             return make_response({'error': str(validation_error)}, 422)
         except KeyError as key_error:

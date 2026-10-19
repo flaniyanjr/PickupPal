@@ -4,10 +4,13 @@ from sqlalchemy.orm import validates
 
 from config import db, bcrypt
 
+POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
+FORMATS = ['5v5', '7v7', '9v9', '11v11']
+
 class User(db.Model, SerializerMixin):
     __tablename__= 'users'
 
-    serialize_rules= ('-_password_hash', '-player_signups.user')
+    serialize_rules= ('-_password_hash', '-player_signups.user', '-created_games')
 
     id= db.Column(db.Integer, primary_key= True)
     username= db.Column(db.String)
@@ -17,8 +20,10 @@ class User(db.Model, SerializerMixin):
     updated_at= db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
 
     player_signups= db.relationship('PlayerSignup', back_populates= 'user', cascade= 'all, delete-orphan')
+    created_games= db.relationship('PickupGame', back_populates= 'creator')
 
     pickup_games= association_proxy('player_signups', 'pickup_game')
+    
 
     @validates('username')
     def validate_username(self, key, username):
@@ -48,7 +53,7 @@ class User(db.Model, SerializerMixin):
 class PickupGame(db.Model, SerializerMixin):
     __tablename__= 'pickup_games'
 
-    serialize_rules= ('-player_signups.pickup_game',)
+    serialize_rules= ('-player_signups.pickup_game', '-creator')
 
     id= db.Column(db.Integer, primary_key=True)
     location= db.Column(db.String)
@@ -56,11 +61,18 @@ class PickupGame(db.Model, SerializerMixin):
     state= db.Column(db.String)
     date= db.Column(db.String)
     time= db.Column(db.String)
+    format= db.Column(db.String, server_default='7v7')
+    max_players= db.Column(db.Integer, server_default='14')
+    latitude= db.Column(db.Float)
+    longitude= db.Column(db.Float)
     sport= db.Column(db.String)
     image= db.Column(db.String)
     total_attendees= db.Column(db.Integer)
+    creator_id= db.Column(db.Integer, db.ForeignKey('users.id'))
+
 
     player_signups= db.relationship('PlayerSignup', back_populates= 'pickup_game', cascade= 'all, delete-orphan')
+    creator= db.relationship('User', back_populates= 'created_games')
 
     users= association_proxy('player_signups', 'user')
 
@@ -81,7 +93,7 @@ class PickupGame(db.Model, SerializerMixin):
         return city
     
     @validates('state')
-    def validate_city(self, key, state):
+    def validate_state(self, key, state):
         if not state:
             raise ValueError('State is required')
         elif type(state) != str:
@@ -103,7 +115,19 @@ class PickupGame(db.Model, SerializerMixin):
         elif type(time) != str:
             raise ValueError('Time must be a string')
         return time
-        
+
+    @validates('format')
+    def validate_format(self, key, format):
+        if format not in FORMATS:
+            raise ValueError(f'Format must be one of: {", ".join(FORMATS)}')
+        return format
+
+    @validates('max_players')
+    def validate_max_players(self, key, max_players):
+        if not isinstance(max_players, int) or max_players < 2 or max_players > 30:
+            raise ValueError('Max players must be a whole number between 2 and 30')
+        return max_players
+
     @validates('sport')
     def validate_sport(self, key, sport):
         if not sport:
@@ -116,6 +140,8 @@ class PickupGame(db.Model, SerializerMixin):
     def validate_image(self, key, image):
         if type(image) != str:
             raise ValueError('Image must be a string')
+        elif image and not image.startswith(('http://', 'https://')):
+            raise ValueError('Image must be a web address starting with http:// or https://')
         return image
 
 
