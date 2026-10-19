@@ -1,5 +1,6 @@
 export const FORMATS = ['5v5', '7v7', '9v9', '11v11']
 export const DEFAULT_FORMAT = '7v7'
+export const MAX_PLAYERS = 40
 
 export const POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
 

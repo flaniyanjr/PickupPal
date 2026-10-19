@@ -6,6 +6,11 @@ from config import db, bcrypt
 
 POSITIONS = ['Goalkeeper', 'Defender', 'Midfielder', 'Forward']
 FORMATS = ['5v5', '7v7', '9v9', '11v11']
+MAX_PLAYERS_LIMIT = 40
+
+def team_size(format):
+    # '7v7' -> 7
+    return int(format.split('v')[0])
 
 class User(db.Model, SerializerMixin):
     __tablename__= 'users'
@@ -124,8 +129,8 @@ class PickupGame(db.Model, SerializerMixin):
 
     @validates('max_players')
     def validate_max_players(self, key, max_players):
-        if not isinstance(max_players, int) or max_players < 2 or max_players > 30:
-            raise ValueError('Max players must be a whole number between 2 and 30')
+        if not isinstance(max_players, int) or max_players < 2 or max_players > MAX_PLAYERS_LIMIT:
+            raise ValueError(f'Max players must be a whole number between 2 and {MAX_PLAYERS_LIMIT}')
         return max_players
 
     @validates('sport')
@@ -143,6 +148,13 @@ class PickupGame(db.Model, SerializerMixin):
         elif image and not image.startswith(('http://', 'https://')):
             raise ValueError('Image must be a web address starting with http:// or https://')
         return image
+
+    def check_capacity(self):
+        if self.format not in FORMATS or self.max_players is None:
+            return
+        minimum = team_size(self.format) * 2
+        if self.max_players < minimum:
+            raise ValueError(f'A {self.format} game needs at least {minimum} players')
 
 
 class PlayerSignup(db.Model, SerializerMixin):
