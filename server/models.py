@@ -169,6 +169,6 @@ class PlayerSignup(db.Model, SerializerMixin):
     
     @validates('preferred_position')
     def validate_position(self, key, position):
-        if type(position) != str:
-            raise ValueError('Preferred position must be a string')
+        if position not in POSITIONS:
+            raise ValueError(f'Preferred position must be one of: {", ".join(POSITIONS)}')
         return position
