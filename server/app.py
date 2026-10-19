@@ -102,14 +102,25 @@ class PlayerSignups(Resource):
         return make_response(signup_list, 200)
 
     def post(self):
+        user_id= session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Login required'}, 401)
         params= request.json
         try:
-            new_signup= PlayerSignup(name= params['name'], preferred_position= params['preferred_position'], user_id= params['user_id'], pickup_game_id= params['pickup_game_id'])
+            game= PickupGame.query.get(params['pickup_game_id'])
+            if not game:
+                return make_response({'error': 'Pickup game not found'}, 404)
+            if PlayerSignup.query.filter_by(user_id= user_id, pickup_game_id= game.id).first():
+                return make_response({'error': 'You are already signed up for this game'}, 409)
+            if len(game.player_signups) >= game.max_players:
+                return make_response({'error': 'This game is full'}, 409)
+            new_signup= PlayerSignup(name= params['name'], preferred_position= params['preferred_position'], user_id= user_id, pickup_game_id= game.id)
         except ValueError as validation_error:
             return make_response({'error': str(validation_error)}, 422)
         except KeyError as key_error:
             return make_response({'error': f'A {key_error} must be included'}, 422)
         db.session.add(new_signup)
+        game.total_attendees= PlayerSignup.query.filter_by(pickup_game_id= game.id).count()
         db.session.commit()
         return make_response(new_signup.to_dict(), 201)
 
@@ -119,12 +130,21 @@ class PlayerSignupsById(Resource):
     def get(self, id):
         signup= PlayerSignup.query.get(id)
         if not signup:
-            return make_response({'error' : 'Player signup not found'})
+            return make_response({'error' : 'Player signup not found'}, 404)
         return make_response(signup.to_dict(), 200)
 
     def delete(self, id):
+        user_id= session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Login required'}, 401)
         signup= PlayerSignup.query.get(id)
+        if not signup:
+            return make_response({'error': 'Player signup not found'}, 404)
+        if signup.user_id != user_id:
+            return make_response({'error': 'You can only remove your own signup'}, 403)
+        game= signup.pickup_game
         db.session.delete(signup)
+        game.total_attendees= PlayerSignup.query.filter_by(pickup_game_id= game.id).count()
         db.session.commit()
         return make_response('', 204)
 
