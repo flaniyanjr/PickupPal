@@ -52,6 +52,7 @@ class PickupGames(Resource):
         params= request.json
         try:
             new_game= PickupGame(location= params['location'], city= params['city'], state= params['state'], date= params['date'], time= params['time'], format= params.get('format', '7v7'), max_players= params.get('max_players', 14), latitude= params.get('latitude'), longitude= params.get('longitude'), sport= params['sport'], image= params['image'], total_attendees= params['total_attendees'], creator_id= user_id,)
+            new_game.check_capacity()
         except ValueError as validation_error:
             return make_response({'error': str(validation_error)}, 422)
         except KeyError as key_error:
@@ -79,6 +80,11 @@ class PickupGamesById(Resource):
                 setattr(game, attr, params[attr])
             except ValueError as validation_error:
                 return make_response({'error': str(validation_error)}, 422)
+        try:
+            game.check_capacity()
+        except ValueError as validation_error:
+            db.session.rollback()
+            return make_response({'error': str(validation_error)}, 422)
         db.session.commit()
         return make_response(game.to_dict(), 200)
     

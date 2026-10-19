@@ -4,7 +4,7 @@ import CreatedGameCard from "./CreatedGameCard.tsx";
 import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 import { User, PickupGame } from "../types"
-import { FORMATS, DEFAULT_FORMAT, minPlayers } from "../constants.ts"
+import { FORMATS, DEFAULT_FORMAT, MAX_PLAYERS, minPlayers } from "../constants.ts"
 
 interface GameFormData {
     location: string
@@ -209,7 +209,7 @@ function CreateGame() {
                                 type='number'
                                 name='max_players'
                                 min={minPlayers(gameData.format)}
-                                max={30}
+                                max={MAX_PLAYERS}
                                 value={gameData.max_players}
                                 onChange={handleChange}
                             />
