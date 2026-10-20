@@ -61,28 +61,13 @@ function SignupForm() {
                 setError(data.error || `Signup failed (status ${responseOne.status})`)
                 return
             }
+
             addNewSignup(data)
+            updateGameAttendees({ ...currentGame, total_attendees: data.pickup_game.total_attendees })
             setSubmitted(true)
             setSignupName('')
             setPosition('')
 
-            try {
-                const responseTwo = await fetch(`/pickup_games/${currentGame.id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        total_attendees: currentGame.total_attendees + 1
-                    })
-                })
-                if (responseTwo.ok) {
-                    const newGame = await responseTwo.json()
-                    updateGameAttendees(newGame)
-                } else {
-                    throw new Error(`Error updating attendance number. Status code: ${responseTwo.status}`)
-                }
-            } catch (err) {
-                console.error('Error:', err)
-            }
         } catch (err) {
             console.error('Error:', err)
             setError('Could not reach the server. Please try again.')
