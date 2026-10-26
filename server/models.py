@@ -155,12 +155,14 @@ class PickupGame(db.Model, SerializerMixin):
         minimum = team_size(self.format) * 2
         if self.max_players < minimum:
             raise ValueError(f'A {self.format} game needs at least {minimum} players')
+        if self.total_attendees and self.max_players < self.total_attendees:
+            raise ValueError('Max players cannot be lower than the number of people already signed up')
 
 
 class PlayerSignup(db.Model, SerializerMixin):
     __tablename__= 'player_signups'
 
-    serialize_rules= ('-user.player_signups', '-pickup_game.player_signups')
+    serialize_rules= ('-user.player_signups', '-pickup_game.player_signups', '-user.email')
 
     id= db.Column(db.Integer, primary_key= True)
     name= db.Column(db.String)

@@ -35,33 +35,24 @@ function PersonalCard({ gameObj }: PersonalCardProps) {
     const targetAttendeeTotal = targetAttendeeGame?.total_attendees ?? 0
 
     async function handleDelete() {
-        if (!targetSignup || !targetAttendeeGame) return
+        if (!targetSignup) return
         try {
-            const responseOne = await fetch(`/player_signups/${targetSignup.id}`, {
+            const response = await fetch(`/player_signups/${targetSignup.id}`, {
                 method: 'DELETE'
             })
-            if (responseOne.ok) {
-                removeSignup(targetSignup.id)
-                const responseTwo = await fetch(`/pickup_games/${id}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        total_attendees: targetAttendeeTotal - 1
-                    })
-                })
-                if (responseTwo.ok) {
-                    const newGame = await responseTwo.json()
-                    updateGameAttendees(newGame)
-                } else {
-                    throw new Error(`Failed to decrease attendance number. Status: ${responseTwo.status}`)
-                }
-            } else {
-                throw new Error(`Failed to delete signup. Status: ${responseOne.status}`)
+            if (!response.ok) {
+                throw new Error(`Failed to delete signup. Status: ${response.status}`)
+            }
+            removeSignup(targetSignup.id)
+
+            const gameResponse = await fetch(`/pickup_games/${id}`)
+            if (gameResponse.ok) {
+                const updatedGame = await gameResponse.json()
+                updateGameAttendees(updatedGame)
             }
         } catch (error) {
             console.error('Error:', error)
         }
-
     }
 
     return (

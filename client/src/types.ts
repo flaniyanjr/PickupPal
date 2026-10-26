@@ -30,7 +30,7 @@ export interface PlayerSignup {
 export interface User {
     id: number
     username: string
-    email: string
+    email?: string
     created_at: string
     updated_at: string
     player_signups?: PlayerSignup[]
