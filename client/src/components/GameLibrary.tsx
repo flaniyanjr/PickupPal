@@ -62,7 +62,7 @@ function GameLibrary() {
                         <input
                             type="text"
                             className="search"
-                            placeholder="Search by venue, city or state..."
+                            placeholder="Venue, city or state"
                             value={searchInput}
                             onChange={handleSearchInput}
                         />
