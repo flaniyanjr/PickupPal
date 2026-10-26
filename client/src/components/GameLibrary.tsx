@@ -3,6 +3,7 @@ import { useState } from "react";
 import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
 import { PickupGame, User } from "../types"
+import MapView from "./MapView.tsx"
 
 interface OutletContext {
     allGames: PickupGame[]
@@ -78,6 +79,8 @@ function GameLibrary() {
                         </select>
                     </div>
                 </div>
+
+                <MapView games={filteredGames} />
 
                 {gameCards}
                 <Footer />
