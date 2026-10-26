@@ -24,6 +24,7 @@ function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
     const [newTime, setNewTime] = useState<string>(time)
     const [showUpdate, setShowUpdate] = useState<boolean>(false)
     const [submitted, setSubmitted] = useState<boolean>(false)
+    const [error, setError] = useState<string>('')
 
     const currentGameSignupsArray = userSignups.filter(signup => {
         return signup.pickup_game_id === id
@@ -57,20 +58,30 @@ function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
         setNewTime(e.target.value)
     }
 
-    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        fetch(`/pickup_games/${id}`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                date: newDate,
-                time: newTime
+        setError('')
+        try {
+            const response = await fetch(`/pickup_games/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    date: newDate,
+                    time: newTime
+                })
             })
-        })
-            .then(r => r.json())
-            .then(newGame => updateNewGame(newGame))
-        setSubmitted(true)
-        setShowUpdate(false)
+            const data = await response.json()
+            if (!response.ok) {
+                setError(data.error || `Update failed (status ${response.status})`)
+                return
+            }
+            updateNewGame(data)
+            setSubmitted(true)
+            setShowUpdate(false)
+        } catch (err) {
+            console.error('Error updating game:', err)
+            setError('Could not reach the server. Please try again.')
+        }
     }
 
     function handleShowUpdate() {
@@ -115,6 +126,7 @@ function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
                         <label id='update-time-text'>Update Time</label>
                         <input id='update-time-input' type='time' name='time' value={newTime} onChange={handleTimeChange} />
                     </div>
+                    {error ? <p style={{ color: 'red' }}>{error}</p> : null}
                     <button className='submit-button green' type='submit'>Submit</button>
                 </form>
                 : null}

@@ -11,6 +11,7 @@ from config import app, db, api
 # Add your model imports
 from models import User, PickupGame, PlayerSignup
 
+ALLOWED_GAME_FIELDS= {'location', 'city', 'state', 'date', 'time', 'format', 'max_players', 'latitude', 'longitude', 'image'}
 
 
 class Users(Resource):
@@ -51,7 +52,7 @@ class PickupGames(Resource):
             return make_response({'error': 'Login required'}, 401)
         params= request.json
         try:
-            new_game= PickupGame(location= params['location'], city= params['city'], state= params['state'], date= params['date'], time= params['time'], format= params.get('format', '7v7'), max_players= params.get('max_players', 14), latitude= params.get('latitude'), longitude= params.get('longitude'), sport= params['sport'], image= params['image'], total_attendees= params['total_attendees'], creator_id= user_id,)
+            new_game= PickupGame(location= params['location'], city= params['city'], state= params['state'], date= params['date'], time= params['time'], format= params.get('format', '7v7'), max_players= params.get('max_players', 14), latitude= params.get('latitude'), longitude= params.get('longitude'), sport= params['sport'], image= params['image'], total_attendees= 0, creator_id= user_id,)
             new_game.check_capacity()
         except ValueError as validation_error:
             return make_response({'error': str(validation_error)}, 422)
@@ -71,14 +72,23 @@ class PickupGamesById(Resource):
         return make_response(game.to_dict(), 200)
 
     def patch(self, id):
-        params= request.json
+        user_id= session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Login required'}, 401)
         game= PickupGame.query.get(id)
         if not game:
             return make_response({'error': 'Pickup game not found'}, 404)
+        if game.creator_id != user_id:
+            return make_response({'error': 'Only the creator can edit this game'}, 403)
+        params= request.json
+        disallowed= [attr for attr in params if attr not in ALLOWED_GAME_FIELDS]
+        if disallowed:
+            return make_response({'error': f'These fields cannot be changed: {", ".join(disallowed)}'}, 422)
         for attr in params:
             try:
                 setattr(game, attr, params[attr])
             except ValueError as validation_error:
+                db.session.rollback()
                 return make_response({'error': str(validation_error)}, 422)
         try:
             game.check_capacity()
@@ -89,7 +99,14 @@ class PickupGamesById(Resource):
         return make_response(game.to_dict(), 200)
     
     def delete(self, id):
+        user_id= session.get('user_id')
+        if not user_id:
+            return make_response({'error': 'Login required'}, 401)
         game= PickupGame.query.get(id)
+        if not game:
+            return make_response({'error': 'Pickup game not found'}, 404)
+        if game.creator_id != user_id:
+            return make_response({'error': 'Only the creator can delete this game'}, 403)
         db.session.delete(game)
         db.session.commit()
         return make_response('', 204)
