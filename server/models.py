@@ -133,6 +133,26 @@ class PickupGame(db.Model, SerializerMixin):
             raise ValueError(f'Max players must be a whole number between 2 and {MAX_PLAYERS_LIMIT}')
         return max_players
 
+    @validates('latitude')
+    def validate_latitude(self, key, latitude):
+        if latitude is None:
+            return latitude
+        if isinstance(latitude, bool) or not isinstance(latitude, (int, float)):
+            raise ValueError('Latitude must be a number')
+        if not -90 <= latitude <= 90:
+            raise ValueError('Latitude must be between -90 and 90')
+        return latitude
+
+    @validates('longitude')
+    def validate_longitude(self, key, longitude):
+        if longitude is None:
+            return longitude
+        if isinstance(longitude, bool) or not isinstance(longitude, (int, float)):
+            raise ValueError('Longitude must be a number')
+        if not -180 <= longitude <= 180:
+            raise ValueError('Longitude must be between -180 and 180')
+        return longitude
+
     @validates('sport')
     def validate_sport(self, key, sport):
         if not sport:
