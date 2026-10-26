@@ -42,8 +42,11 @@ function GameLibrary() {
             sortedGames.sort((a, b) => a.total_attendees - b.total_attendees)
     }
 
+    const searchWords = searchInput.toLowerCase().split(' ').filter(word => word !== '')
+
     const filteredGames = sortedGames.filter(gameObj => {
-        return gameObj.sport.toLowerCase().includes(searchInput.toLowerCase())
+        const searchable = `${gameObj.location} ${gameObj.city} ${gameObj.state}`.toLowerCase()
+        return searchWords.every(word => searchable.includes(word))
     })
 
 
@@ -59,7 +62,7 @@ function GameLibrary() {
                         <input
                             type="text"
                             className="search"
-                            placeholder="Search by sport..."
+                            placeholder="Search by venue, city or state..."
                             value={searchInput}
                             onChange={handleSearchInput}
                         />
