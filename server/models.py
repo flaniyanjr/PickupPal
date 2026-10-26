@@ -162,7 +162,7 @@ class PickupGame(db.Model, SerializerMixin):
 class PlayerSignup(db.Model, SerializerMixin):
     __tablename__= 'player_signups'
 
-    serialize_rules= ('-user.player_signups', '-pickup_game.player_signups')
+    serialize_rules= ('-user.player_signups', '-pickup_game.player_signups', '-user.email')
 
     id= db.Column(db.Integer, primary_key= True)
     name= db.Column(db.String)

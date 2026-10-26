@@ -16,7 +16,7 @@ ALLOWED_GAME_FIELDS= {'location', 'city', 'state', 'date', 'time', 'format', 'ma
 
 class Users(Resource):
     def get(self):
-        users_list= [user.to_dict() for user in User.query.all()]
+        users_list= [user.to_dict(rules=('-email',)) for user in User.query.all()]
         return make_response(users_list, 200)
 
     def post(self):
@@ -37,7 +37,7 @@ class UsersById(Resource):
         user= User.query.get(id)
         if not user:
             return make_response({'error' : 'User not found'}, 404)
-        return make_response(user.to_dict(), 200)
+        return make_response(user.to_dict(rules=('-email',)), 200)
 
 api.add_resource(UsersById, '/api/v1/users/<int:id>')
 
@@ -169,11 +169,13 @@ api.add_resource(PlayerSignupsById, '/api/v1/player_signups/<int:id>')
 
 @app.route('/api/v1/authorized')
 def authorized():
-    try:
-        user= User.query.filter_by(id=session.get('user_id')).first()
-        return make_response(user.to_dict(), 200)
-    except:
-        return make_response({'error': 'User not found'}, 404)
+    user_id= session.get('user_id')
+    if not user_id:
+        return make_response({'error': 'Not logged in'}, 401)
+    user= User.query.get(user_id)
+    if not user:
+        return make_response({'error': 'Not logged in'}, 401)
+    return make_response(user.to_dict(), 200)
     
 @app.route('/api/v1/logout', methods=['DELETE'])
 def logout():
