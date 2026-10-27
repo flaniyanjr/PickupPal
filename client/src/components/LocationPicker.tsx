@@ -1,10 +1,17 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet"
+import { useEffect } from "react"
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
 import { pinIcon } from "../mapIcon.ts"
+
+export interface FocusTarget {
+    latitude: number
+    longitude: number
+}
 
 interface LocationPickerProps {
     latitude: number | null
     longitude: number | null
+    focusTarget: FocusTarget | null
     onPick: (latitude: number, longitude: number) => void
 }
 
@@ -20,7 +27,21 @@ function ClickHandler({ onPick }: { onPick: (latitude: number, longitude: number
     return null
 }
 
-function LocationPicker({ latitude, longitude, onPick }: LocationPickerProps) {
+// Moves the map to the target when an address lookup finds one. Renders nothing itself.
+function FlyToTarget({ target }: { target: FocusTarget | null }) {
+    const map = useMap()
+
+    useEffect(() => {
+        if (target === null) {
+            return
+        }
+        map.setView([target.latitude, target.longitude], 16)
+    }, [map, target])
+
+    return null
+}
+
+function LocationPicker({ latitude, longitude, focusTarget, onPick }: LocationPickerProps) {
     return (
         <MapContainer
             center={[39.5, -98.35]}
@@ -32,6 +53,7 @@ function LocationPicker({ latitude, longitude, onPick }: LocationPickerProps) {
                 url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             <ClickHandler onPick={onPick} />
+            <FlyToTarget target={focusTarget} />
             {latitude !== null && longitude !== null
                 ? <Marker position={[latitude, longitude]} icon={pinIcon} />
                 : null}

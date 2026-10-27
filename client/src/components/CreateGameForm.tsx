@@ -5,7 +5,7 @@ import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 import { User, PickupGame } from "../types"
 import { FORMATS, DEFAULT_FORMAT, MAX_PLAYERS, minPlayers } from "../constants.ts"
-import LocationPicker from "./LocationPicker.tsx"
+import LocationPicker, { FocusTarget } from "./LocationPicker.tsx"
 
 interface GameFormData {
     location: string
@@ -26,6 +26,12 @@ interface OutletContext {
     user: User | null
 }
 
+interface GeocodeResult {
+    lat: string
+    lon: string
+    display_name: string
+}
+
 function CreateGame() {
 
     const initialState: GameFormData = {
@@ -44,6 +50,10 @@ function CreateGame() {
     const [gameData, setGameData] = useState<GameFormData>(initialState)
     const [error, setError] = useState<string>('')
     const { addNewGame, createdGames, user } = useOutletContext<OutletContext>()
+    const [address, setAddress] = useState<string>('')
+    const [lookupStatus, setLookupStatus] = useState<string>('')
+    const [looking, setLooking] = useState<boolean>(false)
+    const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null)
 
     const currentDate = new Date()
     let day = currentDate.getDate().toString().padStart(2, '0')
@@ -93,6 +103,66 @@ function CreateGame() {
         })
     }
 
+    async function handleFindOnMap() {
+        const place = address.trim() !== '' ? address.trim() : gameData.location.trim()
+        if (place === '') {
+            setLookupStatus('Enter an address or a venue name first')
+            return
+        }
+
+        const query = [place, gameData.city.trim(), gameData.state]
+            .filter(part => part !== '')
+            .join(', ')
+
+        setLooking(true)
+        setLookupStatus('')
+
+        try {
+            const params = new URLSearchParams({
+                q: query,
+                format: 'jsonv2',
+                limit: '1',
+                countrycodes: 'us'
+            })
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`)
+            if (!response.ok) {
+                setLookupStatus(`Address search failed (status ${response.status}). You can still click the map.`)
+                return
+            }
+
+            const results: GeocodeResult[] = await response.json()
+            const first = results[0]
+            if (!first) {
+                setLookupStatus('No match found. Try a street address, or click the map.')
+                return
+            }
+
+            const lat = Number(first.lat)
+            const lon = Number(first.lon)
+            if (!Number.isFinite(lat) || !Number.isFinite(lon)) {
+                setLookupStatus('The search returned a bad location. Click the map instead.')
+                return
+            }
+
+            handlePickLocation(lat, lon)
+            setFocusTarget({ latitude: lat, longitude: lon })
+            setLookupStatus(`Found: ${first.display_name}. If the pin is off, click the map to move it.`)
+        } catch (err) {
+            console.error('Error looking up address:', err)
+            setLookupStatus('Could not reach the address search. You can still click the map.')
+        } finally {
+            setLooking(false)
+        }
+    }
+
+    function handleAddressKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+        // Enter in a form input would submit the whole form, so run the lookup instead
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            handleFindOnMap()
+        }
+    }
+
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setError('')
@@ -133,6 +203,9 @@ function CreateGame() {
             }
             addNewGame(data)
             setGameData(initialState)
+            setAddress('')
+            setLookupStatus('')
+            setFocusTarget(null)
         } catch (err) {
             console.error('Error submitting new game:', err)
             setError('Could not reach the server. Please try again.')
@@ -212,9 +285,21 @@ function CreateGame() {
                         </div>
                         <div>
                             <label>Pin the field on the map (optional)</label>
+                            <input
+                                type='text'
+                                placeholder='Address (optional), then press Find on map'
+                                value={address}
+                                onChange={e => setAddress(e.target.value)}
+                                onKeyDown={handleAddressKeyDown}
+                            />
+                            <button type='button' onClick={handleFindOnMap} disabled={looking}>
+                                {looking ? 'Searching...' : 'Find on map'}
+                            </button>
+                            {lookupStatus ? <p>{lookupStatus}</p> : null}
                             <LocationPicker
                                 latitude={gameData.latitude}
                                 longitude={gameData.longitude}
+                                focusTarget={focusTarget}
                                 onPick={handlePickLocation}
                             />
                             {gameData.latitude !== null && gameData.longitude !== null
@@ -222,7 +307,7 @@ function CreateGame() {
                                     Pin set at {gameData.latitude}, {gameData.longitude}{' '}
                                     <button type='button' onClick={handleClearPin}>Clear pin</button>
                                 </p>
-                                : <p>Click the map to drop a pin. Zoom in first for an exact spot.</p>}
+                                : <p>Or click the map to drop a pin. Zoom in first for an exact spot.</p>}
                         </div>
                         <div>
                             <label>Date</label>
