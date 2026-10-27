@@ -24,12 +24,12 @@ if __name__ == '__main__':
         img_stpauls= 'https://www.brockusa.com/wp-content/uploads/2022/08/St_Pauls_Stadium_Field-2022-6-1-scaled-1.jpg'
         img_pier5= 'https://brooklynbridgepark.org/wp-content/uploads/2020/09/Brooklyn-Bridge-Park-Pier-5-soccer-turf-night-scaled-1.jpg'
 
-        g1= PickupGame(location= 'Maryland Sports Arena', city= 'Edgewood', state= 'MD', date= '2026-11-07', time= '19:30', format= '7v7', max_players= 14, sport= 'Soccer', image= img_md, total_attendees= 1, creator_id= user1.id)
-        g2= PickupGame(location= 'Met Oval Field', city= 'New York', state= 'NY', date= '2026-11-08', time= '10:00', format= '11v11', max_players= 22, sport= 'Soccer', image= img_met, total_attendees= 1, creator_id= user1.id)
-        g3= PickupGame(location= 'Clothier Field', city= 'Swarthmore', state= 'PA', date= '2026-11-14', time= '14:45', format= '11v11', max_players= 22, sport= 'Soccer', image= img_clothier, total_attendees= 0, creator_id= user1.id)
-        g4= PickupGame(location= 'Cardozo High School', city= 'Washington', state= 'DC', date= '2026-11-15', time= '11:00', format= '7v7', max_players= 14, sport= 'Soccer', image= img_cardozo, total_attendees= 1, creator_id= user2.id)
-        g5= PickupGame(location= "St. Paul's School", city= 'Brooklandville', state= 'MD', date= '2026-11-21', time= '09:00', format= '5v5', max_players= 10, sport= 'Soccer', image= img_stpauls, total_attendees= 0, creator_id= user2.id)
-        g6= PickupGame(location= 'Pier 5', city= 'Brooklyn', state= 'NY', date= '2026-11-22', time= '16:00', format= '9v9', max_players= 18, sport= 'Soccer', image= img_pier5, total_attendees= 0, creator_id= user2.id)
+        g1= PickupGame(location= 'Maryland Sports Arena', city= 'Edgewood', state= 'MD', date= '2026-11-07', time= '19:30', format= '7v7', max_players= 14, latitude= 39.442183611054446, longitude= -76.29068696153179, sport= 'Soccer', image= img_md, total_attendees= 1, creator_id= user1.id)
+        g2= PickupGame(location= 'Met Oval Field', city= 'New York', state= 'NY', date= '2026-11-08', time= '10:00', format= '11v11', max_players= 22, latitude= 40.71482391336103, longitude= -73.90724763262628, sport= 'Soccer', image= img_met, total_attendees= 1, creator_id= user1.id)
+        g3= PickupGame(location= 'Clothier Field', city= 'Swarthmore', state= 'PA', date= '2026-11-14', time= '14:45', format= '11v11', max_players= 22, latitude= 39.90038757886468, longitude= -75.35284817684943, sport= 'Soccer', image= img_clothier, total_attendees= 0, creator_id= user1.id)
+        g4= PickupGame(location= 'Cardozo High School', city= 'Washington', state= 'DC', date= '2026-11-15', time= '11:00', format= '7v7', max_players= 14, latitude= 38.92121027501493, longitude= -77.02841533272408, sport= 'Soccer', image= img_cardozo, total_attendees= 1, creator_id= user2.id)
+        g5= PickupGame(location= "Tullai Field", city= 'Brooklandville', state= 'MD', date= '2026-11-21', time= '09:00', format= '5v5', max_players= 10, latitude= 39.4270174815202, longitude= -76.67455464618992, sport= 'Soccer', image= img_stpauls, total_attendees= 0, creator_id= user2.id)
+        g6= PickupGame(location= 'Pier 5', city= 'Brooklyn', state= 'NY', date= '2026-11-22', time= '16:00', format= '9v9', max_players= 18, latitude= 40.695031561704845, longitude= -74.00168528844902, sport= 'Soccer', image= img_pier5, total_attendees= 0, creator_id= user2.id)
         db.session.add_all([g1, g2, g3, g4, g5, g6])
         db.session.commit()
 

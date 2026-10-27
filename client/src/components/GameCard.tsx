@@ -4,13 +4,14 @@ import { PickupGame } from "../types"
 
 interface GameCardProps {
     gameObj: PickupGame
+    distanceMiles?: number | null
 }
 
 interface OutletContext {
     setCurrentGame: (game: PickupGame) => void
 }
 
-function GameCard({ gameObj }: GameCardProps) {
+function GameCard({ gameObj, distanceMiles }: GameCardProps) {
     const { location, city, state, date, time, sport, image, total_attendees, id } = gameObj
 
     const { setCurrentGame } = useOutletContext<OutletContext>()
@@ -28,6 +29,7 @@ function GameCard({ gameObj }: GameCardProps) {
                 <p> Time: {time}</p>
                 <p> Sport: {sport}</p>
                 <p> Total Attendees: {total_attendees}</p>
+                {typeof distanceMiles === 'number' ? <p> Distance: {Math.round(distanceMiles)} mi</p> : null}
             </div>
             <button className='submit-button green' onClick={() => {
                 setCurrentGame(gameObj)
