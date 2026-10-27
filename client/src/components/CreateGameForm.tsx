@@ -5,6 +5,7 @@ import sportlogo4 from "../img/sportlogo4.jpg"
 import sportlogo5 from "../img/sportlogo5.jpeg"
 import { User, PickupGame } from "../types"
 import { FORMATS, DEFAULT_FORMAT, MAX_PLAYERS, minPlayers } from "../constants.ts"
+import LocationPicker from "./LocationPicker.tsx"
 
 interface GameFormData {
     location: string
@@ -15,6 +16,8 @@ interface GameFormData {
     format: string
     max_players: string
     image: string
+    latitude: number | null
+    longitude: number | null
 }
 
 interface OutletContext {
@@ -33,7 +36,9 @@ function CreateGame() {
         time: '',
         format: DEFAULT_FORMAT,
         max_players: String(minPlayers(DEFAULT_FORMAT)),
-        image: ''
+        image: '',
+        latitude: null,
+        longitude: null
     }
 
     const [gameData, setGameData] = useState<GameFormData>(initialState)
@@ -69,6 +74,22 @@ function CreateGame() {
                 format: newFormat,
                 max_players: String(minPlayers(newFormat))
             }
+        })
+    }
+
+    function handlePickLocation(latitude: number, longitude: number) {
+        setGameData(current => {
+            return {
+                ...current,
+                latitude: Number(latitude.toFixed(6)),
+                longitude: Number(longitude.toFixed(6))
+            }
+        })
+    }
+
+    function handleClearPin() {
+        setGameData(current => {
+            return { ...current, latitude: null, longitude: null }
         })
     }
 
@@ -188,6 +209,20 @@ function CreateGame() {
                                 <option value="WI">Wisconsin</option>
                                 <option value="WY">Wyoming</option>
                             </select>
+                        </div>
+                        <div>
+                            <label>Pin the field on the map (optional)</label>
+                            <LocationPicker
+                                latitude={gameData.latitude}
+                                longitude={gameData.longitude}
+                                onPick={handlePickLocation}
+                            />
+                            {gameData.latitude !== null && gameData.longitude !== null
+                                ? <p>
+                                    Pin set at {gameData.latitude}, {gameData.longitude}{' '}
+                                    <button type='button' onClick={handleClearPin}>Clear pin</button>
+                                </p>
+                                : <p>Click the map to drop a pin. Zoom in first for an exact spot.</p>}
                         </div>
                         <div>
                             <label>Date</label>
