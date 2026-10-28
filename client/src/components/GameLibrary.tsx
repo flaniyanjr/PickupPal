@@ -5,6 +5,7 @@ import Footer from "./Footer.tsx";
 import MapView from "./MapView.tsx"
 import { distanceMiles } from "../geo.ts"
 import { PickupGame, User } from "../types"
+import { Box } from "@mui/material"
 
 interface OutletContext {
     allGames: PickupGame[]
@@ -133,7 +134,16 @@ function GameLibrary() {
 
                 <MapView games={filteredGames} />
 
-                {gameCards}
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                        gap: 3,
+                        p: 3
+                    }}
+                >
+                    {gameCards}
+                </Box>
                 <Footer />
             </div>
             :
