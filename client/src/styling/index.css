@@ -7,6 +7,8 @@
 
 body {
   background-color: black;
+  color: #EDEADE;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
 }
 
 .card {
@@ -24,7 +26,7 @@ body {
   overflow: hidden;
   background-color: darkred;
   display: inline-grid;
-  box-shadow: 0 0 6px white ;
+  box-shadow: 0 0 6px white;
 }
 
 
@@ -64,10 +66,10 @@ body {
   font-size: 15px
 }
 
-.create-game-form{
+.create-game-form {
   font-family: 'Marcellus';
   font-size: 1.1rem;
-  display: flex; 
+  display: flex;
   color: #EDEADE;
   flex-direction: column;
   align-items: center;
@@ -79,10 +81,10 @@ body {
   height: 100%;
   border-radius: 60px;
   background-color: darkred;
-  box-shadow: 0 0 4px white ;
+  box-shadow: 0 0 4px white;
 }
 
-.create-game-form button{
+.create-game-form button {
   background-color: #EDEADE;
   color: black;
   font-family: 'Marcellus';
@@ -91,7 +93,7 @@ body {
   font-size: 1.2rem;
   margin-top: 1rem;
   border-radius: 10px;
-  box-shadow: 0 0 2px white ;
+  box-shadow: 0 0 2px white;
 }
 
 /* .create-game-form button:hover{
@@ -114,24 +116,24 @@ body {
 }
 
 .search {
-  height:20px;
-  font-size:13pt;
+  height: 20px;
+  font-size: 13pt;
   text-align: center;
   background-color: #EDEADE;
 }
 
 #sort-box {
-    height:20px;
-    font-size:11pt;
-    padding: 0.2%;
-    margin-left: 2%;
-    background-color: #EDEADE;
+  height: 20px;
+  font-size: 11pt;
+  padding: 0.2%;
+  margin-left: 2%;
+  background-color: #EDEADE;
 }
 
 .signup-field {
   background-color: white;
   text-align: center;
-  
+
 }
 
 .signup-container {
@@ -146,7 +148,7 @@ body {
   height: auto;
 }
 
-.form{
+.form {
   padding-top: 30px;
   background-color: darkred;
   border-radius: 5px;
@@ -172,11 +174,11 @@ body {
   padding: 5px;
   position: static;
   width: 250px;
-  height:50px;
+  height: 50px;
   align-items: center;
   margin: auto;
   background-color: darkred;
-  box-shadow: 0 0 4px white ;
+  box-shadow: 0 0 4px white;
   border-color: black;
 }
 
@@ -189,7 +191,7 @@ body {
   align-items: center;
   margin: auto;
   background-color: darkred;
-  box-shadow: 0 0 4px white ;
+  box-shadow: 0 0 4px white;
   border-color: black;
 }
 
@@ -228,10 +230,10 @@ body {
   color: #EDEADE
 }
 
-.logo-four-image-containter{
-  position: absolute; 
+.logo-four-image-containter {
+  position: absolute;
   top: 330px;
-  left: 20px; 
+  left: 20px;
   padding: 0px;
   height: 150px;
 }
@@ -242,10 +244,10 @@ body {
   opacity: 100%;
 }
 
-.logo-five-image-containter{
-  position: absolute; 
+.logo-five-image-containter {
+  position: absolute;
   top: 326px;
-  right: 20px; 
+  right: 20px;
   padding: 0px;
   height: 150px;
 }
@@ -256,16 +258,21 @@ body {
   opacity: 100%;
 }
 
-.required-login-message{
+.required-login-message {
   color: #EDEADE;
   font-family: "Marcellus";
   text-align: center;
 }
 
-.green:hover{
+.green:hover {
   background-color: lightgreen;
 }
 
-.red:hover{
-  background-color: 	#D22B2B;
+.red:hover {
+  background-color: #D22B2B;
+}
+
+signup-input,
+.signup-input input {
+  color: #1a1a1a;
 }

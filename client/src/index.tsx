@@ -8,6 +8,8 @@ import SignupForm from "./components/SignupForm.tsx";
 import PersonalLibrary from "./components/PersonalLibrary.tsx";
 import CreateGame from "./components/CreateGameForm.tsx";
 import MainScreen from "./components/MainScreen.tsx";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./theme.ts";
 
 const router = createBrowserRouter([
   {
@@ -42,7 +44,9 @@ const router = createBrowserRouter([
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(
-  <RouterProvider router={router} />
+  <ThemeProvider theme={theme}>
+    <RouterProvider router={router} />
+  </ThemeProvider>
 );
 
 
