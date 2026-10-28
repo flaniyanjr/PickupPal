@@ -144,8 +144,7 @@ body {
 }
 
 .signup-input {
-  background-color: #EECE96;
-  height: auto;
+  margin: 6px;
 }
 
 .form {
@@ -270,9 +269,4 @@ body {
 
 .red:hover {
   background-color: #D22B2B;
-}
-
-signup-input,
-.signup-input input {
-  color: #1a1a1a;
 }

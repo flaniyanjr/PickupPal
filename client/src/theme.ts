@@ -14,6 +14,9 @@ const theme = createTheme({
         secondary: {
             main: '#EECE96'
         },
+        error: {
+            main: '#FFB4AB'
+        },
         background: {
             // Pure black on purpose: the header and silhouette images are JPGs with black backgrounds
             default: '#000000',
