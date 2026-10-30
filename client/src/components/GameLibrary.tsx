@@ -4,8 +4,9 @@ import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
 import MapView from "./MapView.tsx"
 import { distanceMiles } from "../geo.ts"
+import { isPast } from "../dateTime.ts"
 import { PickupGame, User } from "../types"
-import { Box, CircularProgress, MenuItem, TextField, Typography } from "@mui/material"
+import { Box, CircularProgress, FormControlLabel, MenuItem, Switch, TextField, Typography } from "@mui/material"
 
 interface OutletContext {
     allGames: PickupGame[]
@@ -25,9 +26,14 @@ function GameLibrary() {
     const [sort, setSort] = useState<string>('')
     const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
     const [locationStatus, setLocationStatus] = useState<string>('')
+    const [showPast, setShowPast] = useState<boolean>(false)
 
     function handleSearchInput(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setSearchInput(e.target.value)
+    }
+
+    function handleShowPast(e: React.ChangeEvent<HTMLInputElement>) {
+        setShowPast(e.target.checked)
     }
 
     function handleSort(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -97,10 +103,23 @@ function GameLibrary() {
 
     const searchWords = searchInput.toLowerCase().split(' ').filter(word => word !== '')
 
-    const filteredGames = sortedGames.filter(gameObj => {
+    const matchingGames = sortedGames.filter(gameObj => {
         const searchable = `${gameObj.location} ${gameObj.city} ${gameObj.state}`.toLowerCase()
         return searchWords.every(word => searchable.includes(word))
     })
+
+    const filteredGames = showPast
+        ? matchingGames
+        : matchingGames.filter(gameObj => !isPast(gameObj.date, gameObj.time))
+
+    const hiddenPastCount = matchingGames.length - filteredGames.length
+
+    let emptyMessage = 'No games yet. Create one on the Created Games page.'
+    if (hiddenPastCount > 0) {
+        emptyMessage = `No upcoming games${searchWords.length > 0 ? ' match your search' : ''}. Turn on "Show past games" to see ${hiddenPastCount} past ${hiddenPastCount === 1 ? 'game' : 'games'}.`
+    } else if (searchWords.length > 0) {
+        emptyMessage = 'No games match your search.'
+    }
 
     const gameCards = filteredGames.map((gameObj) => {
         return <GameCard key={gameObj.id} gameObj={gameObj} distanceMiles={distanceFor(gameObj)} />
@@ -146,6 +165,11 @@ function GameLibrary() {
                         <MenuItem value='attendance'>Attendance</MenuItem>
                         <MenuItem value='distance'>Distance (near me)</MenuItem>
                     </TextField>
+                    <FormControlLabel
+                        control={<Switch checked={showPast} onChange={handleShowPast} />}
+                        label="Show past games"
+                        sx={{ m: 0, alignSelf: 'center' }}
+                    />
                 </Box>
 
                 {locationStatus ?
@@ -157,6 +181,7 @@ function GameLibrary() {
                 {gamesLoaded ?
                     <Typography variant="body2" color="text.secondary" sx={{ px: 3, pt: 1 }}>
                         {filteredGames.length} {filteredGames.length === 1 ? 'game' : 'games'}
+                        {hiddenPastCount > 0 ? ` (${hiddenPastCount} past hidden)` : ''}
                     </Typography>
                     : null}
 
@@ -168,9 +193,7 @@ function GameLibrary() {
                     </Box>
                     : filteredGames.length === 0 ?
                         <Typography color="text.secondary" sx={{ p: 3 }}>
-                            {searchWords.length > 0
-                                ? 'No games match your search.'
-                                : 'No games yet. Create one on the Created Games page.'}
+                            {emptyMessage}
                         </Typography>
                         :
                         <Box
