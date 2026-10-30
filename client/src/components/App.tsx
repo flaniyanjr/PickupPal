@@ -11,6 +11,7 @@ function App() {
   const [allSignups, setAllSignups] = useState<PlayerSignup[]>([])
   const [authChecked, setAuthChecked] = useState<boolean>(false)
   const [gamesLoaded, setGamesLoaded] = useState<boolean>(false)
+  const [signupsLoaded, setSignupsLoaded] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
@@ -60,6 +61,8 @@ function App() {
         }
       } catch (error) {
         console.error('Error fetching all signups', error)
+      } finally {
+        setSignupsLoaded(true)
       }
     })()
   }, [])
@@ -124,6 +127,7 @@ function App() {
     setCurrentGame,
     updateGameAttendees,
     userSignups,
+    signupsLoaded,
     addNewSignup,
     removeSignup,
     addNewGame,
