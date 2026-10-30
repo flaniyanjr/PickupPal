@@ -5,10 +5,11 @@ import Footer from "./Footer.tsx";
 import MapView from "./MapView.tsx"
 import { distanceMiles } from "../geo.ts"
 import { PickupGame, User } from "../types"
-import { Box, MenuItem, TextField, Typography } from "@mui/material"
+import { Box, CircularProgress, MenuItem, TextField, Typography } from "@mui/material"
 
 interface OutletContext {
     allGames: PickupGame[]
+    gamesLoaded: boolean
     user: User | null
 }
 
@@ -19,7 +20,7 @@ interface UserLocation {
 
 function GameLibrary() {
 
-    const { allGames, user } = useOutletContext<OutletContext>()
+    const { allGames, user, gamesLoaded } = useOutletContext<OutletContext>()
     const [searchInput, setSearchInput] = useState<string>('')
     const [sort, setSort] = useState<string>('')
     const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
@@ -129,6 +130,7 @@ function GameLibrary() {
                     />
                     <TextField
                         select
+                        name="sort"
                         size="small"
                         label="Sort by"
                         value={sort}
@@ -152,29 +154,35 @@ function GameLibrary() {
                     </Typography>
                     : null}
 
-                <Typography variant="body2" color="text.secondary" sx={{ px: 3, pt: 1 }}>
-                    {filteredGames.length} {filteredGames.length === 1 ? 'game' : 'games'}
-                </Typography>
+                {gamesLoaded ?
+                    <Typography variant="body2" color="text.secondary" sx={{ px: 3, pt: 1 }}>
+                        {filteredGames.length} {filteredGames.length === 1 ? 'game' : 'games'}
+                    </Typography>
+                    : null}
 
                 <MapView games={filteredGames} />
 
-                {filteredGames.length === 0 ?
-                    <Typography color="text.secondary" sx={{ p: 3 }}>
-                        {searchWords.length > 0
-                            ? 'No games match your search.'
-                            : 'No games yet. Create one on the Created Games page.'}
-                    </Typography>
-                    :
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                            gap: 3,
-                            p: 3
-                        }}
-                    >
-                        {gameCards}
+                {!gamesLoaded ?
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                        <CircularProgress />
                     </Box>
+                    : filteredGames.length === 0 ?
+                        <Typography color="text.secondary" sx={{ p: 3 }}>
+                            {searchWords.length > 0
+                                ? 'No games match your search.'
+                                : 'No games yet. Create one on the Created Games page.'}
+                        </Typography>
+                        :
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: 3,
+                                p: 3
+                            }}
+                        >
+                            {gameCards}
+                        </Box>
                 }
                 <Footer />
             </div>
