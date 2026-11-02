@@ -1,11 +1,10 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from 'react'
 import CreatedGameCard from "./CreatedGameCard.tsx";
-import sportlogo4 from "../img/sportlogo4.jpg"
-import sportlogo5 from "../img/sportlogo5.jpeg"
 import { User, PickupGame } from "../types"
-import { FORMATS, DEFAULT_FORMAT, MAX_PLAYERS, minPlayers } from "../constants.ts"
+import { FORMATS, DEFAULT_FORMAT, MAX_PLAYERS, minPlayers, STATES } from "../constants.ts"
 import LocationPicker, { FocusTarget } from "./LocationPicker.tsx"
+import { Alert, Box, Button, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material"
 
 interface GameFormData {
     location: string
@@ -70,13 +69,13 @@ function CreateGame() {
         })
     }
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setGameData(current => {
             return { ...current, [e.target.name]: e.target.value }
         })
     }
 
-    function handleFormatChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    function handleFormatChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const newFormat = e.target.value
         setGameData(current => {
             return {
@@ -155,7 +154,7 @@ function CreateGame() {
         }
     }
 
-    function handleAddressKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    function handleAddressKeyDown(e: React.KeyboardEvent<HTMLElement>) {
         // Enter in a form input would submit the whole form, so run the lookup instead
         if (e.key === 'Enter') {
             e.preventDefault()
@@ -214,142 +213,150 @@ function CreateGame() {
 
     return (
         user ?
-            <div>
-                <div className="create-game-form">
-                    <h4>Create a Game</h4>
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                            <label>Venue</label>
-                            <input type='text' name='location' value={gameData.location} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label>City</label>
-                            <input type='text' name='city' value={gameData.city} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label>State</label>
-                            <select name="state" onChange={handleChange} value={gameData.state}>
-                                <option value=""></option>
-                                <option value="AL">Alabama</option>
-                                <option value="AK">Alaska</option>
-                                <option value="AZ">Arizona</option>
-                                <option value="AR">Arkansas</option>
-                                <option value="CA">California</option>
-                                <option value="CO">Colorado</option>
-                                <option value="CT">Connecticut</option>
-                                <option value="DE">Delaware</option>
-                                <option value="DC">District of Columbia</option>
-                                <option value="FL">Florida</option>
-                                <option value="GA">Georgia</option>
-                                <option value="HI">Hawaii</option>
-                                <option value="ID">Idaho</option>
-                                <option value="IL">Illinois</option>
-                                <option value="IN">Indiana</option>
-                                <option value="IA">Iowa</option>
-                                <option value="KS">Kansas</option>
-                                <option value="KY">Kentucky</option>
-                                <option value="LA">Louisiana</option>
-                                <option value="ME">Maine</option>
-                                <option value="MD">Maryland</option>
-                                <option value="MA">Massachusetts</option>
-                                <option value="MI">Michigan</option>
-                                <option value="MN">Minnesota</option>
-                                <option value="MS">Mississippi</option>
-                                <option value="MO">Missouri</option>
-                                <option value="MT">Montana</option>
-                                <option value="NE">Nebraska</option>
-                                <option value="NV">Nevada</option>
-                                <option value="NH">New Hampshire</option>
-                                <option value="NJ">New Jersey</option>
-                                <option value="NM">New Mexico</option>
-                                <option value="NY">New York</option>
-                                <option value="NC">North Carolina</option>
-                                <option value="ND">North Dakota</option>
-                                <option value="OH">Ohio</option>
-                                <option value="OK">Oklahoma</option>
-                                <option value="OR">Oregon</option>
-                                <option value="PA">Pennsylvania</option>
-                                <option value="RI">Rhode Island</option>
-                                <option value="SC">South Carolina</option>
-                                <option value="SD">South Dakota</option>
-                                <option value="TN">Tennessee</option>
-                                <option value="TX">Texas</option>
-                                <option value="UT">Utah</option>
-                                <option value="VT">Vermont</option>
-                                <option value="VA">Virginia</option>
-                                <option value="WA">Washington</option>
-                                <option value="WV">West Virginia</option>
-                                <option value="WI">Wisconsin</option>
-                                <option value="WY">Wyoming</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Pin the field on the map (optional)</label>
-                            <input
-                                type='text'
-                                placeholder='Address (optional), then press Find on map'
+            <Box sx={{ px: 2, pb: 4 }}>
+                <Paper variant="outlined" sx={{ maxWidth: 640, mx: 'auto', mt: 4, p: 3, borderColor: 'primary.dark' }}>
+                    <Typography variant="h5" component="h1">Create a game</Typography>
+
+                    <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+                        <TextField
+                            label="Venue"
+                            name="location"
+                            value={gameData.location}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TextField
+                                label="City"
+                                name="city"
+                                value={gameData.city}
+                                onChange={handleChange}
+                                required
+                                sx={{ flex: 1 }}
+                            />
+                            <TextField
+                                select
+                                label="State"
+                                name="state"
+                                value={gameData.state}
+                                onChange={handleChange}
+                                required
+                                InputLabelProps={{ shrink: true }}
+                                SelectProps={{ displayEmpty: true }}
+                                sx={{ flex: 1 }}
+                            >
+                                <MenuItem value=''>Select a state</MenuItem>
+                                {STATES.map(s => <MenuItem key={s.value} value={s.value}>{s.label}</MenuItem>)}
+                            </TextField>
+                        </Stack>
+
+                        <Typography variant="subtitle1" sx={{ pt: 1 }}>Pin the field on the map (optional)</Typography>
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TextField
+                                label="Address"
+                                placeholder="Street address, then press Find on map"
                                 value={address}
                                 onChange={e => setAddress(e.target.value)}
                                 onKeyDown={handleAddressKeyDown}
+                                InputLabelProps={{ shrink: true }}
+                                sx={{ flex: 1 }}
                             />
-                            <button type='button' onClick={handleFindOnMap} disabled={looking}>
+                            <Button variant="outlined" onClick={handleFindOnMap} disabled={looking}>
                                 {looking ? 'Searching...' : 'Find on map'}
-                            </button>
-                            {lookupStatus ? <p>{lookupStatus}</p> : null}
+                            </Button>
+                        </Stack>
+                        {lookupStatus ? <Alert severity="info">{lookupStatus}</Alert> : null}
+
+                        <Box sx={{ borderRadius: 1, overflow: 'hidden', border: 1, borderColor: 'divider' }}>
                             <LocationPicker
                                 latitude={gameData.latitude}
                                 longitude={gameData.longitude}
                                 focusTarget={focusTarget}
                                 onPick={handlePickLocation}
                             />
-                            {gameData.latitude !== null && gameData.longitude !== null
-                                ? <p>
-                                    Pin set at {gameData.latitude}, {gameData.longitude}{' '}
-                                    <button type='button' onClick={handleClearPin}>Clear pin</button>
-                                </p>
-                                : <p>Or click the map to drop a pin. Zoom in first for an exact spot.</p>}
-                        </div>
-                        <div>
-                            <label>Date</label>
-                            <input type='date' name='date' value={gameData.date} min={today} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label>Time</label>
-                            <input type='time' name='time' value={gameData.time} onChange={handleChange} />
-                        </div>
-                        <div>
-                            <label>Format</label>
-                            <select name="format" value={gameData.format} onChange={handleFormatChange}>
-                                {FORMATS.map(f => <option key={f} value={f}>{f}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label>Max Players</label>
-                            <input
-                                type='number'
-                                name='max_players'
-                                min={minPlayers(gameData.format)}
-                                max={MAX_PLAYERS}
+                        </Box>
+                        {gameData.latitude !== null && gameData.longitude !== null
+                            ? <Stack direction="row" spacing={1} alignItems="center">
+                                <Typography variant="body2" color="text.secondary">
+                                    Pin set at {gameData.latitude}, {gameData.longitude}
+                                </Typography>
+                                <Button size="small" onClick={handleClearPin}>Clear pin</Button>
+                            </Stack>
+                            : <Typography variant="body2" color="text.secondary">
+                                Or click the map to drop a pin. Zoom in first for an exact spot.
+                            </Typography>}
+
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ pt: 1 }}>
+                            <TextField
+                                label="Date"
+                                name="date"
+                                type="date"
+                                value={gameData.date}
+                                onChange={handleChange}
+                                required
+                                InputLabelProps={{ shrink: true }}
+                                inputProps={{ min: today }}
+                                sx={{ flex: 1 }}
+                            />
+                            <TextField
+                                label="Time"
+                                name="time"
+                                type="time"
+                                value={gameData.time}
+                                onChange={handleChange}
+                                required
+                                InputLabelProps={{ shrink: true }}
+                                sx={{ flex: 1 }}
+                            />
+                        </Stack>
+
+                        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                            <TextField
+                                select
+                                label="Format"
+                                name="format"
+                                value={gameData.format}
+                                onChange={handleFormatChange}
+                                sx={{ flex: 1 }}
+                            >
+                                {FORMATS.map(f => <MenuItem key={f} value={f}>{f}</MenuItem>)}
+                            </TextField>
+                            <TextField
+                                label="Max players"
+                                name="max_players"
+                                type="number"
                                 value={gameData.max_players}
                                 onChange={handleChange}
+                                inputProps={{ min: minPlayers(gameData.format), max: MAX_PLAYERS }}
+                                sx={{ flex: 1 }}
                             />
-                        </div>
-                        <div>
-                            <label>Image URL (optional)</label>
-                            <input type='text' name='image' value={gameData.image} onChange={handleChange} />
-                        </div>
-                        {error ? <p style={{ color: 'red' }}>{error}</p> : null}
-                        <button className='submit-button green' type='submit'>Create</button>
-                    </form>
-                    <div className='logo-four-image-containter'>
-                        <img id='logo-four' src={sportlogo4} alt='tennis sports logo' />
-                    </div>
-                    <div className='logo-five-image-containter'>
-                        <img id='logo-five' src={sportlogo5} alt='tennis sports logo' />
-                    </div>
-                </div>
-                {createdGameCards}
-            </div>
+                        </Stack>
+
+                        <TextField
+                            label="Image URL (optional)"
+                            name="image"
+                            value={gameData.image}
+                            onChange={handleChange}
+                        />
+
+                        {error ? <Alert severity="error">{error}</Alert> : null}
+
+                        <Button type="submit" variant="contained" size="large">Create game</Button>
+                    </Stack>
+                </Paper>
+
+                {createdGames.length > 0 ?
+                    <Box sx={{ mt: 4 }}>
+                        <Typography variant="h6" component="h2" sx={{ textAlign: 'center' }}>
+                            Your created games
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', mt: 1 }}>
+                            {createdGameCards}
+                        </Box>
+                    </Box>
+                    : null}
+            </Box>
             :
             <h1 className="required-login-message">Login required to access this page </h1>
     )
