@@ -77,6 +77,9 @@ function SignupForm() {
 
     return (
         <Box sx={{ maxWidth: 480, mx: 'auto', mt: 4, px: 2 }}>
+            <Button component={RouterLink} to="/game-library" size="small" sx={{ mb: 1 }}>
+                Back to Pickup Games
+            </Button>
             <Paper variant="outlined" sx={{ p: 3, borderColor: 'primary.dark' }}>
                 <Typography variant="h5" component="h1">Sign up for a game</Typography>
                 {currentGame ?
