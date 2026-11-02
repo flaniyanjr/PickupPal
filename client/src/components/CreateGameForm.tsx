@@ -351,7 +351,16 @@ function CreateGame() {
                         <Typography variant="h6" component="h2" sx={{ textAlign: 'center' }}>
                             Your created games
                         </Typography>
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', mt: 1 }}>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: 3,
+                                mt: 2,
+                                maxWidth: 1200,
+                                mx: 'auto'
+                            }}
+                        >
                             {createdGameCards}
                         </Box>
                     </Box>

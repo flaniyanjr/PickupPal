@@ -1,11 +1,15 @@
-import { useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { useState } from "react"
+import { useOutletContext } from "react-router-dom"
+import {
+    Alert, Box, Button, Card, CardActions, CardContent, CardMedia, Chip, Dialog, DialogActions,
+    DialogContent, DialogContentText, DialogTitle, Stack, TextField, Typography
+} from "@mui/material"
 import { PlayerSignup, PickupGame } from "../types"
+import { formatDate, formatTime, isPast } from "../dateTime.ts"
 
 interface OutletContext {
     deleteNewGame: (id: number) => void
     updateNewGame: (game: PickupGame) => void
-    allGames: PickupGame[]
     userSignups: PlayerSignup[]
     removeSignup: (id: number) => void
 }
@@ -16,49 +20,48 @@ interface CreatedGameCardProps {
 
 function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
 
-    const { location, city, state, date, time, sport, image, total_attendees, id } = gameObj
+    const { location, city, state, date, time, format, max_players, image, total_attendees, id } = gameObj
 
-    const { deleteNewGame, allGames, updateNewGame, userSignups, removeSignup } = useOutletContext<OutletContext>()
+    const { deleteNewGame, updateNewGame, userSignups, removeSignup } = useOutletContext<OutletContext>()
 
     const [newDate, setNewDate] = useState<string>(date)
     const [newTime, setNewTime] = useState<string>(time)
-    const [showUpdate, setShowUpdate] = useState<boolean>(false)
-    const [submitted, setSubmitted] = useState<boolean>(false)
+    const [editing, setEditing] = useState<boolean>(false)
+    const [saved, setSaved] = useState<boolean>(false)
     const [error, setError] = useState<string>('')
+    const [confirmingDelete, setConfirmingDelete] = useState<boolean>(false)
+    const [imageFailed, setImageFailed] = useState<boolean>(false)
 
-    const currentGameSignupsArray = userSignups.filter(signup => {
-        return signup.pickup_game_id === id
-    })
+    const currentGameSignup = userSignups.find(signup => signup.pickup_game_id === id)
 
-    const currentGameSignup = currentGameSignupsArray[0]
+    const past = isPast(date, time)
+    const showImage = Boolean(image) && !imageFailed
 
+    const now = new Date()
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 
-    async function handleDelete() {
-        try {
-            const response = await fetch(`/pickup_games/${id}`, {
-                method: 'DELETE',
-            })
-            if (!response.ok) {
-                throw new Error(`Failed to delete game. Status Code: ${response.status}`)
-            }
-            deleteNewGame(id)
-            if (currentGameSignup) {
-                removeSignup(currentGameSignup.id)
-            }
-        } catch (error) {
-            console.log('Error deleting game:', error)
-        }
-    }
-
-    function handleDateChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleDateChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setNewDate(e.target.value)
     }
 
-    function handleTimeChange(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleTimeChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setNewTime(e.target.value)
     }
 
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    function handleStartEdit() {
+        setNewDate(date)
+        setNewTime(time)
+        setError('')
+        setSaved(false)
+        setEditing(true)
+    }
+
+    function handleCancelEdit() {
+        setEditing(false)
+        setError('')
+    }
+
+    async function handleSave(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setError('')
         try {
@@ -76,62 +79,132 @@ function CreatedGameCard({ gameObj }: CreatedGameCardProps) {
                 return
             }
             updateNewGame(data)
-            setSubmitted(true)
-            setShowUpdate(false)
+            setSaved(true)
+            setEditing(false)
         } catch (err) {
             console.error('Error updating game:', err)
             setError('Could not reach the server. Please try again.')
         }
     }
 
-    function handleShowUpdate() {
-        setShowUpdate(current => !current)
-        setSubmitted(false)
+    async function handleDelete() {
+        try {
+            const response = await fetch(`/pickup_games/${id}`, {
+                method: 'DELETE',
+            })
+            if (!response.ok) {
+                throw new Error(`Failed to delete game. Status Code: ${response.status}`)
+            }
+            deleteNewGame(id)
+            if (currentGameSignup) {
+                removeSignup(currentGameSignup.id)
+            }
+        } catch (err) {
+            console.error('Error deleting game:', err)
+            setConfirmingDelete(false)
+            setError('Could not delete the game. Please try again.')
+        }
     }
 
-    const targetAttendeeArray = allGames.filter(game => {
-        return game.id === id
-    })
-    const targetAttendeeGame = targetAttendeeArray[0]
-    const targetAttendeeTotal = targetAttendeeGame?.total_attendees ?? 0
-
-    const currentDate = new Date()
-    const day = currentDate.getDate().toString().padStart(2, '0')
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0')
-    const year = currentDate.getFullYear()
-
-    const today = `${year}-${month}-${day}`
-
     return (
-        <div className="card">
-            <h2>{location}</h2>
-            <img className="location-image submit-button" src={image} alt={location} onClick={handleShowUpdate} />
-            <div>
-                <p> City: {city}</p>
-                <p> State: {state}</p>
-                <p> Date: {date}</p>
-                <p> Time: {time}</p>
-                <p> Sport: {sport}</p>
-                <p> Total Attendees: {targetAttendeeTotal}</p>
-            </div>
-            <button className='submit-button red' onClick={handleDelete}>Delete</button>
-            {submitted ? <p>Updated!</p> : null}
-            {showUpdate ?
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label id='update-date-text'>Update Date</label>
-                        <input id='update-date-input' type='date' name='date' value={newDate} min={today} onChange={handleDateChange} />
-                    </div>
-                    <div>
-                        <label id='update-time-text'>Update Time</label>
-                        <input id='update-time-input' type='time' name='time' value={newTime} onChange={handleTimeChange} />
-                    </div>
-                    {error ? <p style={{ color: 'red' }}>{error}</p> : null}
-                    <button className='submit-button green' type='submit'>Submit</button>
-                </form>
-                : null}
+        <Card variant="outlined" sx={{ display: 'flex', flexDirection: 'column', opacity: past ? 0.6 : 1 }}>
+            {showImage ? (
+                <CardMedia
+                    component="img"
+                    image={image}
+                    alt={location}
+                    onError={() => setImageFailed(true)}
+                    sx={{ height: 180, objectFit: 'cover' }}
+                />
+            ) : (
+                <Box
+                    role="img"
+                    aria-label="Soccer ball"
+                    sx={{
+                        height: 180,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 64,
+                        background: 'linear-gradient(135deg, #8E1B23, #161214)'
+                    }}
+                >
+                    ⚽
+                </Box>
+            )}
 
-        </div>
+            <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="h2" gutterBottom>
+                    {location}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {city}, {state}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                    {formatDate(date)} at {formatTime(time)}
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.5 }}>
+                    <Chip size="small" label={format} />
+                    <Chip
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        label={`${total_attendees} of ${max_players} going`}
+                    />
+                    {past ? <Chip size="small" label="Past" /> : null}
+                </Box>
+
+                {saved ? <Alert severity="success" sx={{ mt: 2 }}>Game updated</Alert> : null}
+                {error ? <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert> : null}
+
+                {editing ?
+                    <Stack component="form" spacing={2} onSubmit={handleSave} noValidate sx={{ mt: 2 }}>
+                        <TextField
+                            label="Date"
+                            type="date"
+                            value={newDate}
+                            onChange={handleDateChange}
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{ min: today }}
+                        />
+                        <TextField
+                            label="Time"
+                            type="time"
+                            value={newTime}
+                            onChange={handleTimeChange}
+                            size="small"
+                            InputLabelProps={{ shrink: true }}
+                        />
+                        <Stack direction="row" spacing={1}>
+                            <Button type="submit" variant="contained" size="small">Save</Button>
+                            <Button size="small" onClick={handleCancelEdit}>Cancel</Button>
+                        </Stack>
+                    </Stack>
+                    : null}
+            </CardContent>
+
+            <CardActions sx={{ p: 2, pt: 0 }}>
+                {!editing ?
+                    <Button variant="outlined" onClick={handleStartEdit}>Edit date and time</Button>
+                    : null}
+                <Button color="error" onClick={() => setConfirmingDelete(true)}>Delete</Button>
+            </CardActions>
+
+            <Dialog open={confirmingDelete} onClose={() => setConfirmingDelete(false)}>
+                <DialogTitle>Delete this game?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {location} on {formatDate(date)} will be removed, along with everyone's signups for it. This cannot be undone.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmingDelete(false)}>Cancel</Button>
+                    <Button color="error" onClick={handleDelete}>Delete</Button>
+                </DialogActions>
+            </Dialog>
+        </Card>
     )
 }
 
