@@ -88,7 +88,14 @@ function PersonalLibrary() {
                             {emptyMessage}
                         </Typography>
                         :
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', p: 2 }}>
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: 3,
+                                p: 3
+                            }}
+                        >
                             {gameCards}
                         </Box>
                 }
