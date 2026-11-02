@@ -51,7 +51,8 @@ function Signup() {
                     const { user } = await response.json()
                     setUser(user)
                 } else if (signup) {
-                    setFormError('Username or email already in use. Please use another one')
+                    const data = await response.json().catch(() => null)
+                    setFormError(data?.error ?? 'Could not create the account. Please try again.')
                 } else {
                     setFormError('Incorrect username or password. Please try again')
                 }
