@@ -40,45 +40,6 @@ body {
   object-fit: contain;
 }
 
-
-.signup-field {
-  background-color: white;
-  text-align: center;
-
-}
-
-.signup-container {
-  max-width: 1000px;
-  height: auto;
-  margin: auto;
-  margin-top: 50px;
-}
-
-.signup-input {
-  margin: 6px;
-}
-
-.form {
-  padding-top: 30px;
-  background-color: darkred;
-  border-radius: 5px;
-  border: solid white;
-  padding-bottom: 5%;
-}
-
-#signup-button {
-  color: #EDEADE
-}
-
-#signup-button:hover {
-  color: blue
-}
-
-#signup-submit {
-  padding-top: 1%;
-  padding-bottom: 1%;
-}
-
 .submit-button {
   cursor: pointer;
 }
@@ -103,11 +64,6 @@ body {
 #update-time-text {
   font-family: "Marcellus";
   padding-right: 5%;
-}
-
-#login-error-message {
-  color: white;
-  font-family: "Marcellus";
 }
 
 .required-login-message {
