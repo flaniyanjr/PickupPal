@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { Link as RouterLink, useOutletContext } from "react-router-dom";
 import { User, PlayerSignup, PickupGame } from "../types"
 import { POSITIONS } from "../constants.ts"
+import { Alert, Box, Button, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material"
 
 
 interface OutletContext {
     user: User
-    currentGame: PickupGame
+    currentGame: PickupGame | null
     updateGameAttendees: (newGame: PickupGame) => void
     addNewSignup: (newSignup: PlayerSignup) => void
 }
@@ -19,11 +20,11 @@ function SignupForm() {
     const [submitted, setSubmitted] = useState(false)
     const [error, setError] = useState('')
 
-    function handleSignupName(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleSignupName(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setSignupName(e.target.value)
     }
 
-    function handlePosition(e: React.ChangeEvent<HTMLSelectElement>) {
+    function handlePosition(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setPosition(e.target.value)
     }
 
@@ -75,25 +76,69 @@ function SignupForm() {
     }
 
     return (
-        <div className="create-game-form">
-            <h4>Signup Form</h4>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name</label>
-                    <input type='text' name='name' value={signupName} onChange={handleSignupName}></input>
-                </div>
-                <div>
-                    <label>Preferred Position</label>
-                    <select name='position' value={position} onChange={handlePosition}>
-                        <option value=''>Select a position</option>
-                        {POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
-                    </select>
-                </div>
-                {error ? <p style={{ color: 'red' }}>{error}</p> : null}
-                <button className='submit-button green' type='submit'>Register</button>
-            </form>
-            {submitted ? <p>Signup Complete!</p> : null}
-        </div>
+        <Box sx={{ maxWidth: 480, mx: 'auto', mt: 4, px: 2 }}>
+            <Button component={RouterLink} to="/game-library" size="small" sx={{ mb: 1 }}>
+                Back to Pickup Games
+            </Button>
+            <Paper variant="outlined" sx={{ p: 3, borderColor: 'primary.dark' }}>
+                <Typography variant="h5" component="h1">Sign up for a game</Typography>
+                {currentGame ?
+                    <Typography color="text.secondary" sx={{ mt: 0.5 }}>
+                        {currentGame.location}, {currentGame.city}, {currentGame.state}
+                    </Typography>
+                    : null}
+
+                <Stack component="form" spacing={2} onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
+                    {!currentGame ?
+                        <Alert
+                            severity="info"
+                            action={
+                                <Button color="inherit" size="small" component={RouterLink} to="/game-library">
+                                    Pickup Games
+                                </Button>
+                            }
+                        >
+                            No game selected. Pick one from the game list.
+                        </Alert>
+                        : null}
+
+                    <TextField
+                        label="Name"
+                        name="name"
+                        value={signupName}
+                        onChange={handleSignupName}
+                    />
+                    <TextField
+                        select
+                        label="Preferred position"
+                        name="position"
+                        value={position}
+                        onChange={handlePosition}
+                        InputLabelProps={{ shrink: true }}
+                        SelectProps={{ displayEmpty: true }}
+                    >
+                        <MenuItem value=''>Select a position</MenuItem>
+                        {POSITIONS.map(p => <MenuItem key={p} value={p}>{p}</MenuItem>)}
+                    </TextField>
+
+                    {error ? <Alert severity="error">{error}</Alert> : null}
+                    {submitted ?
+                        <Alert
+                            severity="success"
+                            action={
+                                <Button color="inherit" size="small" component={RouterLink} to="/personal-page">
+                                    My Games
+                                </Button>
+                            }
+                        >
+                            Signup complete!
+                        </Alert>
+                        : null}
+
+                    <Button type="submit" variant="contained" size="large">Register</Button>
+                </Stack>
+            </Paper>
+        </Box>
     )
 }
 

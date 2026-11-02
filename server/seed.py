@@ -19,7 +19,7 @@ if __name__ == '__main__':
         print('Creating Games')
         img_md= 'https://s3-media0.fl.yelpcdn.com/bphoto/jMgAm9iujApYifv5yHTglQ/1000s.jpg'
         img_met= 'https://images.squarespace-cdn.com/content/v1/515e1bace4b0bca14d7a6ed3/1589414655900-A3UKH3L0A9HL2RUWYOOV/IMG_7929+2.jpg?format=1000w'
-        img_clothier= 'https://pbs.twimg.com/media/E5S3mB1WYAEJI90?format=jpg&name=4096x4096'
+        img_clothier= 'https://swarthmoreathletics.com/images/2023/12/18/231116-campus-drone-0080.jpg?width=600&height=360&mode=crop'
         img_cardozo= 'https://live.staticflickr.com/5111/7157491064_36143f512c_b.jpg'
         img_stpauls= 'https://www.brockusa.com/wp-content/uploads/2022/08/St_Pauls_Stadium_Field-2022-6-1-scaled-1.jpg'
         img_pier5= 'https://brooklynbridgepark.org/wp-content/uploads/2020/09/Brooklyn-Bridge-Park-Pier-5-soccer-turf-night-scaled-1.jpg'

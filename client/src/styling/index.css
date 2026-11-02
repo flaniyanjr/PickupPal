@@ -7,6 +7,8 @@
 
 body {
   background-color: black;
+  color: #EDEADE;
+  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
 }
 
 .card {
@@ -24,7 +26,7 @@ body {
   overflow: hidden;
   background-color: darkred;
   display: inline-grid;
-  box-shadow: 0 0 6px white ;
+  box-shadow: 0 0 6px white;
 }
 
 
@@ -36,161 +38,6 @@ body {
   margin: auto;
   text-align: center;
   object-fit: contain;
-}
-
-.create-game-form h4 {
-  font-family: 'Marcellus';
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
-
-.create-game-form input {
-  background-color: #EECE96;
-  width: 100%;
-  margin: 6px 0;
-  padding: 8px;
-  box-sizing: border-box;
-  font-family: 'Marcellus';
-  font-size: 15px
-}
-
-.create-game-form select {
-  background-color: #EECE96;
-  width: 100%;
-  margin: 6px 0;
-  padding: 8px;
-  box-sizing: border-box;
-  font-family: 'Marcellus';
-  font-size: 15px
-}
-
-.create-game-form{
-  font-family: 'Marcellus';
-  font-size: 1.1rem;
-  display: flex; 
-  color: #EDEADE;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 3px;
-  max-width: 33.5%;
-  margin: auto;
-  text-align: center;
-  height: 100%;
-  border-radius: 60px;
-  background-color: darkred;
-  box-shadow: 0 0 4px white ;
-}
-
-.create-game-form button{
-  background-color: #EDEADE;
-  color: black;
-  font-family: 'Marcellus';
-  width: 5.5rem;
-  height: 2.4rem;
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  border-radius: 10px;
-  box-shadow: 0 0 2px white ;
-}
-
-/* .create-game-form button:hover{
-  background-color: #36454F;
-} */
-
-.container {
-  display: flex;
-  flex-flow: row wrap;
-  max-width: 100%;
-  min-width: 50%;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 0.2%;
-}
-
-#sort-text {
-  color: white;
-  font-size: 13pt;
-}
-
-.search {
-  height:20px;
-  font-size:13pt;
-  text-align: center;
-  background-color: #EDEADE;
-}
-
-#sort-box {
-    height:20px;
-    font-size:11pt;
-    padding: 0.2%;
-    margin-left: 2%;
-    background-color: #EDEADE;
-}
-
-.signup-field {
-  background-color: white;
-  text-align: center;
-  
-}
-
-.signup-container {
-  max-width: 1000px;
-  height: auto;
-  margin: auto;
-  margin-top: 50px;
-}
-
-.signup-input {
-  background-color: #EECE96;
-  height: auto;
-}
-
-.form{
-  padding-top: 30px;
-  background-color: darkred;
-  border-radius: 5px;
-  border: solid white;
-  padding-bottom: 5%;
-}
-
-#signup-button {
-  color: #EDEADE
-}
-
-#signup-button:hover {
-  color: blue
-}
-
-#signup-submit {
-  padding-top: 1%;
-  padding-bottom: 1%;
-}
-
-.search-sort-container {
-  border: 2px solid darkred;
-  padding: 5px;
-  position: static;
-  width: 250px;
-  height:50px;
-  align-items: center;
-  margin: auto;
-  background-color: darkred;
-  box-shadow: 0 0 4px white ;
-  border-color: black;
-}
-
-.personal-search-container {
-  border: 2px solid darkred;
-  padding: 5px;
-  position: static;
-  width: 250px;
-  height: 33px;
-  align-items: center;
-  margin: auto;
-  background-color: darkred;
-  box-shadow: 0 0 4px white ;
-  border-color: black;
 }
 
 .submit-button {
@@ -219,53 +66,16 @@ body {
   padding-right: 5%;
 }
 
-#login-error-message {
-  color: white;
-  font-family: "Marcellus";
-}
-
-#signup-total {
-  color: #EDEADE
-}
-
-.logo-four-image-containter{
-  position: absolute; 
-  top: 330px;
-  left: 20px; 
-  padding: 0px;
-  height: 150px;
-}
-
-#logo-four {
-  max-width: 300%;
-  max-height: 300%;
-  opacity: 100%;
-}
-
-.logo-five-image-containter{
-  position: absolute; 
-  top: 326px;
-  right: 20px; 
-  padding: 0px;
-  height: 150px;
-}
-
-#logo-five {
-  max-width: 300%;
-  max-height: 300%;
-  opacity: 100%;
-}
-
-.required-login-message{
+.required-login-message {
   color: #EDEADE;
   font-family: "Marcellus";
   text-align: center;
 }
 
-.green:hover{
+.green:hover {
   background-color: lightgreen;
 }
 
-.red:hover{
-  background-color: 	#D22B2B;
+.red:hover {
+  background-color: #D22B2B;
 }

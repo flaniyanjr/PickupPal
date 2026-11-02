@@ -46,7 +46,7 @@ function LocationPicker({ latitude, longitude, focusTarget, onPick }: LocationPi
         <MapContainer
             center={[39.5, -98.35]}
             zoom={4}
-            style={{ height: '300px', width: '70%', margin: '10px auto' }}
+            style={{ height: '300px', width: '100%' }}
         >
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

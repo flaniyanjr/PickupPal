@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, TextField, InputLabel } from '@mui/material';
+import { Alert, Box, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik'
 import * as yup from 'yup';
 import { useState } from 'react'
@@ -11,9 +11,8 @@ interface OutletContext {
 
 function Signup() {
 
-    const [signup, setSignup] = useState(true)
-    const [badLogin, setBadLogin] = useState(false)
-    const [badSignup, setBadSignup] = useState(false)
+    const [signup, setSignup] = useState(false)
+    const [formError, setFormError] = useState('')
     const { setUser } = useOutletContext<OutletContext>()
 
     const signupSchema = yup.object().shape({
@@ -38,6 +37,7 @@ function Signup() {
         },
         validationSchema: signup ? signupSchema : loginSchema,
         onSubmit: async (values) => {
+            setFormError('')
             const endpoint = signup ? '/users' : '/login'
             try {
                 const response = await fetch(endpoint, {
@@ -50,86 +50,100 @@ function Signup() {
                 if (response.ok) {
                     const { user } = await response.json()
                     setUser(user)
+                } else if (signup) {
+                    const data = await response.json().catch(() => null)
+                    setFormError(data?.error ?? 'Could not create the account. Please try again.')
                 } else {
-                    if (endpoint === '/login') {
-                        setBadLogin(true)
-                        setBadSignup(false)
-                    } else if (endpoint === '/users') {
-                        setBadSignup(true)
-                        setBadLogin(false)
-                    }
+                    setFormError('Incorrect username or password. Please try again')
                 }
             } catch (error) {
                 console.error("Error submitting form:", error)
+                setFormError('Could not reach the server. Please try again.')
             }
         }
     })
 
     function toggleSignup() {
         setSignup(current => !current)
+        setFormError('')
+        formik.setTouched({}, false)
     }
 
+    const usernameError = formik.touched.username && formik.errors.username
+    const emailError = formik.touched.email && formik.errors.email
+    const passwordError = formik.touched.password && formik.errors.password
+    const confirmError = formik.touched.passwordConfirmation && formik.errors.passwordConfirmation
+
     return (
-        <Box className='signup-container'>
+        <Box sx={{ maxWidth: 440, mx: 'auto', mt: 6, px: 2 }}>
+            <Paper variant="outlined" sx={{ p: 3, borderColor: 'primary.dark' }}>
+                <Typography variant="h5" component="h1">
+                    {signup ? 'Create an account' : 'Log in'}
+                </Typography>
 
-            <div className='signup-field form'>
-                <Button onClick={toggleSignup} id='signup-button'>{signup ? 'Click to Login' : 'Click to Register'}</Button>
-
-                <form onSubmit={formik.handleSubmit}>
+                <Stack component="form" spacing={2} onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                     <TextField
                         id="username"
+                        name="username"
                         label="Username"
-                        variant="outlined"
-                        error={!!formik.errors.username}
-                        helperText={formik.errors.username}
+                        autoComplete="username"
                         required
+                        error={Boolean(usernameError)}
+                        helperText={usernameError}
                         value={formik.values.username}
                         onChange={formik.handleChange}
-                        className='signup-input'
+                        onBlur={formik.handleBlur}
                     />
                     {signup && <TextField
                         id="email"
-                        label="email"
-                        variant="outlined"
-                        color='secondary'
-                        error={!!formik.errors.email}
-                        helperText={formik.errors.email}
+                        name="email"
+                        label="Email"
+                        type="email"
+                        autoComplete="email"
                         required
+                        error={Boolean(emailError)}
+                        helperText={emailError}
                         value={formik.values.email}
                         onChange={formik.handleChange}
-                        className='signup-input'
+                        onBlur={formik.handleBlur}
                     />}
                     <TextField
                         id="password"
-                        label="password"
+                        name="password"
+                        label="Password"
                         type="password"
-                        variant="outlined"
-                        error={!!formik.errors.password}
-                        helperText={formik.errors.password}
+                        autoComplete={signup ? 'new-password' : 'current-password'}
                         required
+                        error={Boolean(passwordError)}
+                        helperText={passwordError}
                         value={formik.values.password}
                         onChange={formik.handleChange}
-                        className='signup-input'
+                        onBlur={formik.handleBlur}
                     />
                     {signup && <TextField
                         id="passwordConfirmation"
-                        label="re-enter password"
+                        name="passwordConfirmation"
+                        label="Re-enter password"
                         type="password"
-                        variant="outlined"
-                        error={!!formik.errors.passwordConfirmation}
-                        helperText={formik.errors.passwordConfirmation}
+                        autoComplete="new-password"
                         required
+                        error={Boolean(confirmError)}
+                        helperText={confirmError}
                         value={formik.values.passwordConfirmation}
                         onChange={formik.handleChange}
-                        className='signup-input'
+                        onBlur={formik.handleBlur}
                     />}
-                    <div id='signup-submit' >
-                        <Button id='signup-submit' variant='contained' type='submit'>Submit</Button>
-                    </div>
-                    {badLogin ? <h2 id='login-error-message'>Incorrect username or password. Please try again</h2> : null}
-                    {badSignup ? <h2 id='login-error-message'> Username or email already in use. Please use another one</h2> : null}
-                </form>
-            </div>
+
+                    {formError ? <Alert severity="error">{formError}</Alert> : null}
+
+                    <Button type="submit" variant="contained" size="large" disabled={formik.isSubmitting}>
+                        {signup ? 'Register' : 'Log in'}
+                    </Button>
+                    <Button onClick={toggleSignup}>
+                        {signup ? 'Already have an account? Log in' : 'New here? Create an account'}
+                    </Button>
+                </Stack>
+            </Paper>
         </Box>
     )
 }

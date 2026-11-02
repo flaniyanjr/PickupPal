@@ -4,10 +4,13 @@ import GameCard from "./GameCard.tsx"
 import Footer from "./Footer.tsx";
 import MapView from "./MapView.tsx"
 import { distanceMiles } from "../geo.ts"
+import { isPast } from "../dateTime.ts"
 import { PickupGame, User } from "../types"
+import { Box, CircularProgress, FormControlLabel, MenuItem, Switch, TextField, Typography } from "@mui/material"
 
 interface OutletContext {
     allGames: PickupGame[]
+    gamesLoaded: boolean
     user: User | null
 }
 
@@ -18,17 +21,22 @@ interface UserLocation {
 
 function GameLibrary() {
 
-    const { allGames, user } = useOutletContext<OutletContext>()
+    const { allGames, user, gamesLoaded } = useOutletContext<OutletContext>()
     const [searchInput, setSearchInput] = useState<string>('')
     const [sort, setSort] = useState<string>('')
     const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
     const [locationStatus, setLocationStatus] = useState<string>('')
+    const [showPast, setShowPast] = useState<boolean>(false)
 
-    function handleSearchInput(e: React.ChangeEvent<HTMLInputElement>) {
+    function handleSearchInput(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setSearchInput(e.target.value)
     }
 
-    function handleSort(e: React.ChangeEvent<HTMLSelectElement>) {
+    function handleShowPast(e: React.ChangeEvent<HTMLInputElement>) {
+        setShowPast(e.target.checked)
+    }
+
+    function handleSort(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const choice = e.target.value
 
         // Every sort except distance, or distance when we already know where the user is
@@ -95,10 +103,23 @@ function GameLibrary() {
 
     const searchWords = searchInput.toLowerCase().split(' ').filter(word => word !== '')
 
-    const filteredGames = sortedGames.filter(gameObj => {
+    const matchingGames = sortedGames.filter(gameObj => {
         const searchable = `${gameObj.location} ${gameObj.city} ${gameObj.state}`.toLowerCase()
         return searchWords.every(word => searchable.includes(word))
     })
+
+    const filteredGames = showPast
+        ? matchingGames
+        : matchingGames.filter(gameObj => !isPast(gameObj.date, gameObj.time))
+
+    const hiddenPastCount = matchingGames.length - filteredGames.length
+
+    let emptyMessage = 'No games yet. Create one on the Created Games page.'
+    if (hiddenPastCount > 0) {
+        emptyMessage = `No upcoming games${searchWords.length > 0 ? ' match your search' : ''}. Turn on "Show past games" to see ${hiddenPastCount} past ${hiddenPastCount === 1 ? 'game' : 'games'}.`
+    } else if (searchWords.length > 0) {
+        emptyMessage = 'No games match your search.'
+    }
 
     const gameCards = filteredGames.map((gameObj) => {
         return <GameCard key={gameObj.id} gameObj={gameObj} distanceMiles={distanceFor(gameObj)} />
@@ -107,33 +128,85 @@ function GameLibrary() {
     return (
         user ?
             <div>
-                <div className='search-sort-container'>
-                    <div className="container">
-                        <input
-                            type="text"
-                            className="search"
-                            placeholder="Venue, city or state"
-                            value={searchInput}
-                            onChange={handleSearchInput}
-                        />
-                    </div>
-                    <div className='container'>
-                        <label id='sort-text'>Sort:</label>
-                        <select name="sort" value={sort} onChange={handleSort} id='sort-box'>
-                            <option value=''></option>
-                            <option value='date'>Date</option>
-                            <option value='time'>Time</option>
-                            <option value='state'>State</option>
-                            <option value='attendance'>Attendance</option>
-                            <option value='distance'>Distance (Near Me)</option>
-                        </select>
-                        {locationStatus ? <p>{locationStatus}</p> : null}
-                    </div>
-                </div>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        alignItems: 'flex-start',
+                        gap: 2,
+                        px: 3,
+                        pt: 3
+                    }}
+                >
+                    <TextField
+                        size="small"
+                        label="Search"
+                        placeholder="Venue, city or state"
+                        value={searchInput}
+                        onChange={handleSearchInput}
+                        InputLabelProps={{ shrink: true }}
+                        sx={{ flex: '1 1 280px', maxWidth: 520 }}
+                    />
+                    <TextField
+                        select
+                        name="sort"
+                        size="small"
+                        label="Sort by"
+                        value={sort}
+                        onChange={handleSort}
+                        InputLabelProps={{ shrink: true }}
+                        SelectProps={{ displayEmpty: true }}
+                        sx={{ minWidth: 220 }}
+                    >
+                        <MenuItem value=''>Default</MenuItem>
+                        <MenuItem value='date'>Date</MenuItem>
+                        <MenuItem value='time'>Time</MenuItem>
+                        <MenuItem value='state'>State</MenuItem>
+                        <MenuItem value='attendance'>Attendance</MenuItem>
+                        <MenuItem value='distance'>Distance (near me)</MenuItem>
+                    </TextField>
+                    <FormControlLabel
+                        control={<Switch checked={showPast} onChange={handleShowPast} />}
+                        label="Show past games"
+                        sx={{ m: 0, alignSelf: 'center' }}
+                    />
+                </Box>
+
+                {locationStatus ?
+                    <Typography variant="body2" color="text.secondary" sx={{ px: 3, pt: 1 }}>
+                        {locationStatus}
+                    </Typography>
+                    : null}
+
+                {gamesLoaded ?
+                    <Typography variant="body2" color="text.secondary" sx={{ px: 3, pt: 1 }}>
+                        {filteredGames.length} {filteredGames.length === 1 ? 'game' : 'games'}
+                        {hiddenPastCount > 0 ? ` (${hiddenPastCount} past hidden)` : ''}
+                    </Typography>
+                    : null}
 
                 <MapView games={filteredGames} />
 
-                {gameCards}
+                {!gamesLoaded ?
+                    <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                        <CircularProgress />
+                    </Box>
+                    : filteredGames.length === 0 ?
+                        <Typography color="text.secondary" sx={{ p: 3 }}>
+                            {emptyMessage}
+                        </Typography>
+                        :
+                        <Box
+                            sx={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                                gap: 3,
+                                p: 3
+                            }}
+                        >
+                            {gameCards}
+                        </Box>
+                }
                 <Footer />
             </div>
             :
