@@ -1,6 +1,5 @@
 import App from "./components/App.tsx";
 import "./styling/index.css";
-import "./styling/welcomepage.css"
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import GameLibrary from "./components/GameLibrary.tsx"

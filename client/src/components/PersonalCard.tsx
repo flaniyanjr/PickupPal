@@ -1,5 +1,8 @@
-import { useOutletContext } from "react-router-dom";
+import { useState } from "react"
+import { useOutletContext } from "react-router-dom"
+import { Card, CardMedia, CardContent, CardActions, Box, Button, Chip, Typography } from "@mui/material"
 import { PlayerSignup, PickupGame } from "../types"
+import { formatDate, formatTime, isPast } from "../dateTime.ts"
 
 interface PersonalCardProps {
     gameObj: PickupGame
@@ -16,23 +19,15 @@ function PersonalCard({ gameObj }: PersonalCardProps) {
 
     const { userSignups, removeSignup, allGames, updateGameAttendees } = useOutletContext<OutletContext>()
 
-    const { location, city, state, date, time, sport, image, total_attendees, id } = gameObj
+    const { location, city, state, date, time, format, image, id } = gameObj
 
-    const targetSignupArray = userSignups.filter(signup => {
-        if (signup.pickup_game.id === id) {
-            return true
-        } else {
-            return false
-        }
-    })
-    const targetSignup = targetSignupArray[0]
+    const [imageFailed, setImageFailed] = useState<boolean>(false)
 
+    const targetSignup = userSignups.find(signup => signup.pickup_game.id === id)
+    const targetAttendeeTotal = allGames.find(game => game.id === id)?.total_attendees ?? 0
 
-    const targetAttendeeArray = allGames.filter(game => {
-        return game.id === id
-    })
-    const targetAttendeeGame = targetAttendeeArray[0]
-    const targetAttendeeTotal = targetAttendeeGame?.total_attendees ?? 0
+    const past = isPast(date, time)
+    const showImage = Boolean(image) && !imageFailed
 
     async function handleDelete() {
         if (!targetSignup) return
@@ -56,19 +51,56 @@ function PersonalCard({ gameObj }: PersonalCardProps) {
     }
 
     return (
-        <div className='card'>
-            <h2>{location}</h2>
-            <img className="location-image" src={image} alt={location} />
-            <div>
-                <p> City: {city}</p>
-                <p> State: {state}</p>
-                <p> Date: {date}</p>
-                <p> Time: {time}</p>
-                <p> Sport: {sport}</p>
-                <p> Total Attendees: {targetAttendeeTotal}</p>
-            </div>
-            <button className="submit-button red" onClick={handleDelete}>Unregister</button>
-        </div>
+        <Card variant="outlined" sx={{ display: 'flex', flexDirection: 'column', opacity: past ? 0.6 : 1 }}>
+            {showImage ? (
+                <CardMedia
+                    component="img"
+                    image={image}
+                    alt={location}
+                    onError={() => setImageFailed(true)}
+                    sx={{ height: 180, objectFit: 'cover' }}
+                />
+            ) : (
+                <Box
+                    role="img"
+                    aria-label="Soccer ball"
+                    sx={{
+                        height: 180,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 64,
+                        background: 'linear-gradient(135deg, #8E1B23, #161214)'
+                    }}
+                >
+                    ⚽
+                </Box>
+            )}
+
+            <CardContent sx={{ flexGrow: 1 }}>
+                <Typography variant="h6" component="h2" gutterBottom>
+                    {location}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {city}, {state}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                    {formatDate(date)} at {formatTime(time)}
+                </Typography>
+
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1.5 }}>
+                    {format ? <Chip size="small" label={format} /> : null}
+                    <Chip size="small" variant="outlined" color="primary" label={`${targetAttendeeTotal} going`} />
+                    {past ? <Chip size="small" label="Past" /> : null}
+                </Box>
+            </CardContent>
+
+            <CardActions sx={{ p: 2, pt: 0 }}>
+                <Button fullWidth variant="outlined" color="inherit" onClick={handleDelete}>
+                    Unregister
+                </Button>
+            </CardActions>
+        </Card>
     )
 }
 
